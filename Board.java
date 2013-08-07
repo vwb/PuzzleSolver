@@ -4,6 +4,10 @@ public class Board {
 	boolean[][] myBoard;
 	String [] BlockString;
 	int [] BlockElements;
+	
+	/**List of all blocks currently in the tray.
+    	 * Used as a reference when seeing if blocks have space to move. */
+    	public ArrayList<Block> blocklist = new ArrayList<Block>();
 
 	//Initialize the board object as a boolean array. 
 	public Board(int row, int column){
