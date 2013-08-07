@@ -28,20 +28,25 @@ public class Board {
 		for(int i = 0 ; i<BlockElements.length ; i++){
 			BlockElements[i] = Integer.parseInt(BlockString[i]);
 		}
-		//Do with distance between the the two values rather than the elements themselves because 
-		//they are not always greater than etc.
-		int y_distance = Math.abs(BlockElements[1] - BlockElements[3]);
-		int x_distance = Math.abs(BlockElements[0] - BlockElements[2]);
+		//System.out.println(x_distance);
 		
 		//Grab the smaller of the two columns and rows.
-		int k = Math.min(BlockElements[0], BlockElements[2])-1;
-		int j = Math.min(BlockElements[1], BlockElements[3])-1;
+		int minrow = Math.min(BlockElements[0], BlockElements[2]);
+		int mincol = Math.min(BlockElements[1], BlockElements[3]);
+		int maxrow = Math.max(BlockElements[0], BlockElements[2]);
+		int maxcol = Math.max(BlockElements[1], BlockElements[3]);
+		//System.out.println(j);
+		
+		int y_distance = maxrow - minrow;
+		int x_distance = maxcol - mincol;
 				
 		//For the upper bound case of the for loop just add the distance to the smaller value
 		//Able to use the variables themselves to grab the right spots in the board.
-		for ( int f = k ; f <= f+y_distance  ;  f++){
-			for ( int i = j ; i <= i + x_distance ; i++){
-				myBoard[f][i] = true;
+		for ( int f = minrow ; f <= minrow + y_distance  ;  f++){
+			//System.out.println("I am f: " + f);
+			for ( int p = mincol ; p <= mincol + x_distance ; p++){
+				//System.out.println("I am p: " + p);
+				myBoard[f][p] = true;
 			}
 		}
 	}
