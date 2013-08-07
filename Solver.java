@@ -16,6 +16,11 @@ public class Solver {
      * Eliminates redundancy in creating board objects */
     public static HashSet<Board> boardset = new HashSet<Board>();
     
+    /** Priority Queue containing a prioritized set of potential boards.
+     * Based on heuristic evaluation boards are ranked as more or less desirable,
+     * and consequently selected to eventually find the goal configuration. */
+    public static PriorityQueue<Board> prioritylist = new PriorityQueue<Board>();
+    
     
     
     /** Create a Solver object's fields based on program inputs. */
