@@ -1,4 +1,5 @@
 //Make a 2D boolean array representation of the board based on the input file.
+import java.util.*;
 
 public class Board {
 	boolean[][] myBoard;
