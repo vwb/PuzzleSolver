@@ -42,8 +42,11 @@ public class Block {
         UP, DOWN, LEFT, RIGHT;
     }
     
-    /** */
-    public void move () {
-        
+    /** Two blocks are equal if they contain the same coordinate points. */
+    public boolean equals (Object obj) {
+        Block other = (Block) obj;
+        boolean uppercheck = other.UL.equals(UL);
+        boolean lowercheck = other.LR.equals(LR);
+        return (uppercheck & lowercheck);
     }
 }
