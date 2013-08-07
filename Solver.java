@@ -31,6 +31,39 @@ public class Solver {
         }
     }
     
+    /* 
+     * Return true if the configuration of Board b has blocks of the
+     * right size placed in the right locations as indicated by the
+     * goal configuration
+     */
+    public static boolean compareToGoal(Board b) {
+        // myBlocks is unimplemented and represents the ArrayList of
+    	// blocks stored in each Board object
+    	boolean[] results = new boolean[goalconfigs.size()];
+    	boolean result = false;
+    	for (int i = 0; i < goalconfigs.size(); i++) {
+    		results[i] = boardContainsGoalBlock(b, goalconfigs.get(i));
+    	}
+    	for (int i = 1; i < results.length; i++) {
+    		result = results[i] && results[i-1];
+    	}
+    	return result;
+    }
+    
+    /*
+     * A helper function for compareToGoal. Returns true if Board b
+     * contains a block of the right size and location specified by
+     * goalblock
+     */
+    private static boolean boardContainsGoalBlock(Board b, String goalblock) {
+		for (int j = 0; j < b.blocklist.size(); j++) {
+			if (b.blocklist.get(j).toString().equals(goalblock)) {
+				return true;
+			}
+		}
+    	return false;
+    }
+    
     
     public static void main(String[] args) {
         
