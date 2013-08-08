@@ -165,8 +165,8 @@ public class Board {
 	 */
 	
 	public boolean isOK() {
-		int rowHeight = getRow();
-		int colHeight = getCol();
+		int rowHeight = getWidth();
+		int colHeight = getHeight();
 		Block currentConfig = blocklist.get(0);
 		String[] config = null;
 
