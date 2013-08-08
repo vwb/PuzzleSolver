@@ -159,6 +159,38 @@ public class Board {
 		}
 		return isinBoth;
 	}
+		/*
+	 *  ------ isOK -----
+	 *  determine if currentConfiguration is outside of row and column boundaries.
+	 */
+	
+	public boolean isOK() {
+		int rowHeight = getRow();
+		int colHeight = getCol();
+		Block currentConfig = blocklist.get(0);
+		String[] config = null;
+
+		for(int i = 1; i < blocklist.size(); i++) {
+			currentConfig = blocklist.get(i);
+			config = currentConfig.toString().split(" ");
+		}
+		/*
+			Tests to see if the currentConfiguration
+			i.e. [ 1 2 3 4 ] has a number greater than row or col height
+			Row = 5, Col = 5
+			BAD INPUT [ 1 6 2 7 ]
+		
+		 */
+		//Any block outside of Boundary
+		for(int i = 0; i < config.length; i++) {
+			int element = Integer.parseInt(config[i]);
+			if(element > rowHeight || element > colHeight) {
+				return false;
+			}
+		}
+
+		return true;
+	} //end isOK
 
 
 }
