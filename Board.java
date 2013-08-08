@@ -95,6 +95,57 @@ public class Board {
         blocklist.add(new Block(myblock));
     }
     
+    //Temporary HashCode Method
+		//Uses prime number (31) and multiplies it by Array.hashCode(myBoard)
+
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + Arrays.hashCode(myBoard);
+			System.out.println(result);
+			return result;
+		}
+
+		/*	---- deepEquals ----
+	    	1. Loops through the input arrays, gets each pair
+	    	2. Analyses the type of each pair
+	    	3. Delegates the equal deciding logic to one of the overloaded Arrays.equals if they are one of the primitive arrays
+	    	4. Delegates recursively to Arrays.deepEquals if it is an Object array
+	    	5. Calls the respective object’s equals, for any other object
+		*/ 
+		@Override
+		public boolean equals(Object obj) {
+			boolean isinBoth = false;
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof Board)) {
+				return false;
+			}
+
+			Board other = (Board)  obj;
+			if(other.myBoard.length != myBoard.length) {
+				return false;
+			}
+			if (!Arrays.deepEquals(myBoard, other.myBoard)) {
+				return false;
+			}
+
+			for(int i = 0; i < myBoard.length; i++) {
+				isinBoth = false;
+				for(int j = 0; j < myBoard[i].length; j++) {
+					if(!isinBoth) {
+						if(myBoard[i][j] == other.myBoard[i][j]) {
+							isinBoth = true;
+						}
+					}
+				}
+			}
+			return isinBoth;
+		}
 
 
 }
