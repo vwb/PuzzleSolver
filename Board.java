@@ -3,7 +3,7 @@ import java.util.ArrayList;
 //Make a 2D boolean array representation of the board based on the input file.
 
 public class Board {
-    boolean[][] myBoard;
+    private boolean[][] myBoard;
     String [] BlockString;
     int [] BlockElements;
     
@@ -28,6 +28,10 @@ public class Board {
     }
     public int getWidth() {
     	return width;
+    }
+    
+    public boolean[][] getBoard(){
+    	return myBoard;
     }
     
     /** Generates a new board based on the movement of a single block.
