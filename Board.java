@@ -13,7 +13,12 @@ public class Board {
     
     /**List of all blocks currently in the tray.
      * Used as a reference when seeing if blocks have space to move. */
-    public ArrayList<Block> blocklist;
+    private ArrayList<Block> blocklist;
+    
+    /** Get blocklist */
+    public ArrayList<Block> blocklist() {
+        return blocklist;
+    }
 
     //Initialize the board object as a boolean array. 
     public Board(int row, int column){
