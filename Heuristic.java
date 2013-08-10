@@ -91,8 +91,62 @@ public class Heuristic {
 		return 0;
 	}
 	
-	public static int adjacentemptyspace(Board input){
-		return 0;
+	/*
+	 * 				-----AdjacentEmptySpace-----
+	 * 
+	 * 		Herusitic Method that takes a current Board as an input,
+	 * 		Then based on the number of adjacent empty spaces, we sum
+	 * 		a counter (soFar) in regards to the most relevant spaces
+	 * 		on a board that a block can possibly move. In the end, the counter
+	 * 		is returned after summing the entire board. We will then use this
+	 * 		method to determine which Boards are most likely to solve a puzzle.
+	 */
+	
+	public static double adjacentemptyspace(Board input){
+		//HashSet of Point Objects to reduce redundancy of already seen Points.
+		HashSet<Point> set = new HashSet<Point>();
+		double soFar = 0.0;
+		for (int i = 0; i < input.getWidth(); i++) {
+			for (int j = 0; j < input.getHeight(); j++) {
+				if ((j == 0 && i == 0) || (i == 0 && input.myBoard[i][j-1] == true) ||
+						(j == 0 && input.myBoard[i-1][j] == true) ||
+								input.myBoard[i-1][j-1] == true) {
+					soFar += whiteSpaceHelper(input, i, j, set, 1.0);
+				}
+			}
+		}
+		return soFar;
+	}
+	/*
+	 * 			Helper function for adjacentwhitespace, takes in: 
+	 * 			(Board object, X Coordinate, Y coordinate, Hashset, counter)
+	 * 
+	 * 			-- Adds already seen Points to HashSet
+	 * 			-- Checks that we cant run off of the Edge of Board
+	 * 			-- Identifys Upper Left corners of boxes
+	 * 			-- returns a running sum of best case white space.
+	 */
+	
+	
+	public static double whiteSpaceHelper(Board b, int x, int y, HashSet<Point> set, double soFar) {
+		boolean[][] vals = b.getBoard();
+		if (set.contains(new Point(x, y))) {
+			return soFar;
+		}
+		set.add(new Point(x, y));
+		if ((vals[x+1][y] == true && vals[x][y+1] == true) || x == b.getWidth() && y == b.getHeight()) {
+			return soFar;
+		}
+		if (vals[x][y+1] == true || y == b.getHeight()) {
+			return soFar + whiteSpaceHelper(b, x + 1, y, set, 1.5 + soFar);
+		}
+		if (vals[x+1][y] == true || x == b.getWidth()) {
+			return soFar + whiteSpaceHelper(b, x, y + 1, set, 1.5 + soFar);
+		}
+		else {
+			return whiteSpaceHelper(b, x + 1, y + 1, set, 1.5 + soFar);
+		}
+
 	}
 	
 	public static int GoalSpotsFree(Board input){
