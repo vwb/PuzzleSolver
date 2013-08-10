@@ -7,8 +7,8 @@ public class Block {
     /** Point objects referencing the upper left & lower right corners.
      * To avoid having one point per corner, use height and width info
      * to get dimensions. */
-    Point UL;
-    Point LR;
+    private Point UL;
+    private Point LR;
     
     int width;
     int height;
@@ -36,6 +36,15 @@ public class Block {
         height = 1 + Math.abs((row1 - row2));
         width = 1 + Math.abs((col1 - col2));
     }
+    
+    /** Retrieve Points */
+    public Point UL() {
+        return UL;
+    }
+    
+    public Point LR() {
+        return LR;
+    }
 
     /** Gives string representation of form "row1 column1 row2 column2" */
     public String toString() {
@@ -47,7 +56,7 @@ public class Block {
     /** Returns true if a block can move up one space,
      * i.e. all slots are unoccupied. */
     public boolean checkup (Board board) {
-        boolean[][] array = board.myBoard;
+        boolean[][] array = board.getBoard();
         int startrow = UL.x-1;
         if (startrow < 0) {
             return false; //Moved out of board
@@ -69,7 +78,7 @@ public class Block {
     /** Returns true if a block can move down one space,
      * i.e. all slots below are unoccupied. */
     public boolean checkdown (Board board) {
-        boolean[][] array = board.myBoard;
+        boolean[][] array = board.getBoard();
         int startrow = LR.x+1;
         if (startrow > board.height) {
             return false; //Moved out of board
@@ -91,7 +100,7 @@ public class Block {
     /** Returns true if a block can move left one space,
      * i.e. all slots are unoccupied. */
     public boolean checkleft (Board board) {
-        boolean[][] array = board.myBoard;
+        boolean[][] array = board.getBoard();
         int startrow = UL.x;
 
         int startcol = UL.y-1;
@@ -114,7 +123,7 @@ public class Block {
     /** Returns true if a block can move left one space,
      * i.e. all slots are unoccupied. */
     public boolean checkright (Board board) {
-        boolean[][] array = board.myBoard;
+        boolean[][] array = board.getBoard();
         int startrow = UL.x;
 
         int startcol = LR.y+1;
