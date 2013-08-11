@@ -88,8 +88,68 @@ public class Heuristic {
 		return 0;
 	}
 
-	public static int ManhattanDistance(Board input, Solver s){
-		return 0;
+		public static int ManhattanDistance(Board input, Solver s){
+		ArrayList<Block> goal = s.goalconfigs;
+		ArrayList<Block> blocks = input.blocklist();
+		HashMap<Block, Integer> seenSoFar = new HashMap<Block, Integer>();
+		int sum = 0;
+		int area = input.getHeight() * input.getWidth();
+		double frac = (double) sum / (double) area;
+		
+		for (int i = 0; i < blocks.size(); i++) {
+			for (int j = 0; j < goal.size(); j++) {
+				if (goal.get(j).height == blocks.get(i).height &&
+						goal.get(j).width == blocks.get(i).width) {
+					sum += manhattanHelper(blocks.get(i), goal.get(j), seenSoFar);
+				}
+			}
+		}
+		
+		if (0.0 <= frac && frac <= 0.1) {
+			return 100;
+		}
+		if (.1 <= frac && frac <= .2) {
+			return 90;
+		}
+		if (.2 <= frac && frac <= .3) {
+			return 80;
+		}
+		if (.3 <= frac && frac <= .4) {
+			return 70;
+		}
+		if (.4 <= frac && frac <= .5) {
+			return 60;
+		}
+		if (.5 <= frac && frac <= .6) {
+			return 50;
+		}
+		if (.6 <= frac && frac <= .7) {
+			return 40;
+		}
+		if (.7 <= frac && frac <= .8) {
+			return 30;
+		}
+		if (.8 <= frac && frac <= .9) {
+			return 20;
+		}
+		else {
+			return 0;
+		}
+	}
+	
+	static private int manhattanHelper(Block block, Block goal, HashMap map) {
+		int x = Math.max(block.UL().x, goal.UL().x) - Math.min(block.UL().x, goal.UL().x);
+		int y = Math.max(block.UL().y, goal.UL().y) - Math.min(block.UL().y, goal.UL().y);
+		int sum = x + y;
+		if (map.containsKey(block)) {
+			if (sum < (Integer) map.get(block)) {
+				map.put(block, sum);
+			}
+			else {
+				sum = (Integer) map.get(block);
+			}
+		}
+		return sum;
 	}
 
 	/*
