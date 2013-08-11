@@ -7,6 +7,10 @@ public class Board implements Comparable {
     String [] BlockString;
     int [] BlockElements;
     
+    /** The move that created this board; used as a reference
+     * when doing the print sequence of a solved puzzle */
+    private String definingmove;
+    
     
     /** Heuristic Value of this board */
     private int heuristic = 0;
@@ -44,10 +48,14 @@ public class Board implements Comparable {
         return heuristic;
     }
     
+    public String getdefine() {
+        return definingmove;
+    }
+    
     /** Set heuristics for a board; only done if configuration is new
      * and consequently worthy of checking */
-    public void setHeuristic() {
-        heuristic = runtests();
+    public void setHeuristic(Solver s) {
+        heuristic = runtests(s);
     }
     
     public boolean[][] getBoard(){
@@ -66,6 +74,9 @@ public class Board implements Comparable {
         blocklist = new ArrayList<Block>(oldboard.blocklist);
         blocklist.remove(oldblock);
         blocklist.add(newblock);
+        
+        definingmove = "" + oldblock.UL().x + " " + oldblock.UL().y + " "
+                        + newblock.UL().x + " " + newblock.UL().y;
         
         
         this.updateboard(oldblock, false);
@@ -90,12 +101,12 @@ public class Board implements Comparable {
     
     /** Run a board through the set of heuristics, incrementing or decrementing
      * heuristic value with each test. */
-    public int runtests() {
+    public int runtests(Solver s) {
         int total = 0;
-        total += Heuristic.adjacentemptyspace(this);
-        total += Heuristic.OpenPath(this);
-        total += Heuristic.ManhattanDistance(this);
-        total += Heuristic.GoalSpotsFree(this);
+        total += Heuristic.adjacentemptyspace(this, s);
+        total += Heuristic.OpenPath(this, s);
+        total += Heuristic.ManhattanDistance(this, s);
+        total += Heuristic.GoalSpotsFree(this, s);
         return total;
     }
 
