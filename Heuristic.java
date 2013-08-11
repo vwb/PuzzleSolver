@@ -6,14 +6,14 @@ public class Heuristic {
 	public Heuristic(){
 	}
 	
-	public static int OpenPath(Board input){
+	public static int OpenPath(Board input, Solver sol){
 		int myValue = 0;
 		for (int i = 0 ; i < input.blocklist.size() ; i++){
 			Block temp = input.blocklist.get(i);
 			boolean check = true;
 			//compare temp to the goal blocks. if same width and height check if clear path
-			for (int j = 0; j < Solver.goalconfigs.size(); j++){
-				Block goal = Solver.goalconfigs.get(j);
+			for (int j = 0; j < sol.goalconfigs.size(); j++){
+				Block goal = sol.goalconfigs.get(j);
 				myValue += OpenHelper(input, temp, goal);
 				System.out.println("This is myValue: " + myValue);
 			}
@@ -88,7 +88,7 @@ public class Heuristic {
 		return 0;
 	}
 	
-	public static int ManhattanDistance(Board input){
+	public static int ManhattanDistance(Board input, Solver s){
 		return 0;
 	}
 	
