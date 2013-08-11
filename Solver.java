@@ -23,7 +23,7 @@ public class Solver {
     /** Priority Queue containing a prioritized set of potential boards.
      * Based on heuristic evaluation boards are ranked as more or less desirable,
      * and consequently selected to eventually find the goal configuration. */
-    public static PriorityQueue<Board> prioritylist = new PriorityQueue<Board>();
+    public static PriorityQueue<Board> priorityqueue = new PriorityQueue<Board>();
     
     /** Create a Solver object's fields based on program inputs. */
     public Solver (String[] args) {
@@ -64,14 +64,58 @@ public class Solver {
      * goalblock
      */
     private static boolean boardContainsGoalBlock(Board b, Block goalblock) {
-        for (int j = 0; j < b.blocklist.size(); j++) {
-            if (b.blocklist.get(j).equals(goalblock)) {
+        for (int j = 0; j < b.blocklist().size(); j++) {
+            if (b.blocklist().get(j).equals(goalblock)) {
                 return true;
             }
         }
         return false;
     }
     
+    /** Generate all possible moves from this particular board.
+     * Iterate over its blocklist and attempt to move a particular block
+     * one unit in all directions. If that move is possible, and that configuration
+     * is completely new, then add it to the hashSet and priorityQueue */
+    public void generatemoves (Board board) {
+        ArrayList<Block> allblocks = board.blocklist();
+        for (int i = 0; i < allblocks.size(); i ++) {
+            Block block = allblocks.get(i);
+            
+            Block down = block.movedown();
+            Block up = block.moveup();
+            Block left = block.moveleft();
+            Block right = block.moveright();
+            
+            // Check downward movement
+            if (block.checkdown(board) && !boardset.contains(new Board(board, block, down))) {
+                Board downboard = new Board(board, block, down);
+                downboard.setHeuristic();
+                boardset.add(downboard);
+                priorityqueue.add(downboard);
+            }
+            // Check upward movement
+            if (block.checkup(board) && !boardset.contains(new Board(board, block, up))) {
+                Board upboard = new Board(board, block, up);
+                upboard.setHeuristic();
+                boardset.add(upboard);
+                priorityqueue.add(upboard);
+            }
+            // Check leftward movement
+            if (block.checkleft(board) && !boardset.contains(new Board(board, block, left))) {
+                Board leftboard = new Board(board, block, left);
+                leftboard.setHeuristic();
+                boardset.add(leftboard);
+                priorityqueue.add(leftboard);
+            }
+            // Check rightward movement
+            if (block.checkright(board) && !boardset.contains(new Board(board, block, right))) {
+                Board rightboard = new Board(board, block, right);
+                rightboard.setHeuristic();
+                boardset.add(rightboard);
+                priorityqueue.add(rightboard);
+            }
+        }
+    }
     
     public static void main(String[] args) {
         
