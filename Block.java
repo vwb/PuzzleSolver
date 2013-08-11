@@ -62,7 +62,7 @@ public class Block {
             return false; //Moved out of board
         }
         int startcol = UL.y;
-        for (int i = startcol; i <= startcol + width; i ++) {
+        for (int i = startcol; i < startcol + width; i ++) {
             if (array[startrow][i] == true) { // Slot is already occupied
                 return false;
             }
@@ -84,7 +84,7 @@ public class Block {
             return false; //Moved out of board
         }
         int startcol = UL.y;
-        for (int i = startcol; i <= startcol + width; i ++) {
+        for (int i = startcol; i < startcol + width; i ++) {
             if (array[startrow][i] == true) { // Slot is already occupied
                 return false;
             }
@@ -107,7 +107,7 @@ public class Block {
         if (startcol < 0) {
             return false; //moved out of board
         }
-        for (int i = startrow; i <= startrow + height; i ++) {
+        for (int i = startrow; i < startrow + height; i ++) {
             if (array[i][startcol] == true) { // Slot is already occupied
                 return false;
             }
@@ -130,7 +130,7 @@ public class Block {
         if (startcol > board.width) {
             return false; //moved out of board
         }
-        for (int i = startrow; i <= startrow + height; i ++) {
+        for (int i = startrow; i < startrow + height; i ++) {
             if (array[i][startcol] == true) { // Slot is already occupied
                 return false;
             }
