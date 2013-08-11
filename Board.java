@@ -1,15 +1,19 @@
-import java.util.ArrayList;
+import java.util.*;
 
 //Make a 2D boolean array representation of the board based on the input file.
 
-public class Board {
+public class Board implements Comparable {
     private boolean[][] myBoard;
     String [] BlockString;
     int [] BlockElements;
     
+    
+    /** Heuristic Value of this board */
+    private int heuristic = 0;
+    
     /** Dimensions of board */
-    int height;
-    int width;
+    private int height;
+    private int width;
     
     /**List of all blocks currently in the tray.
      * Used as a reference when seeing if blocks have space to move. */
@@ -26,17 +30,28 @@ public class Board {
         blocklist = new ArrayList<Block>();
         height = row;
         width = column;
+        heuristic = 0;
     }
     
     public int getHeight() {
-    	return height;
+        return height;
     }
     public int getWidth() {
-    	return width;
+        return width;
+    }
+    
+    public int getHeuristic() {
+        return heuristic;
+    }
+    
+    /** Set heuristics for a board; only done if configuration is new
+     * and consequently worthy of checking */
+    public void setHeuristic() {
+        heuristic = runtests();
     }
     
     public boolean[][] getBoard(){
-    	return myBoard;
+        return myBoard;
     }
     
     /** Generates a new board based on the movement of a single block.
@@ -52,6 +67,7 @@ public class Board {
         blocklist.remove(oldblock);
         blocklist.add(newblock);
         
+        
         this.updateboard(oldblock, false);
         this.updateboard(newblock, true);
     }
@@ -59,17 +75,28 @@ public class Board {
     /** Given a certain change of blocks, update the boolean array
      * to reflect the new positions. */
     public void updateboard(Block block, boolean bool) {
-        int toprow = block.UL.x;
-        int topcol = block.UL.y;
+        int toprow = block.UL().x;
+        int topcol = block.UL().y;
         
-        int botrow = block.LR.x;
-        int botcol = block.LR.y;
+        int botrow = block.LR().x;
+        int botcol = block.LR().y;
         
         for (int i = toprow; i <= botrow + block.height; i++) {
             for (int j = topcol; j <= botcol + block.width; j++) {
                 myBoard[i][j] = bool;
             }
         }
+    }
+    
+    /** Run a board through the set of heuristics, incrementing or decrementing
+     * heuristic value with each test. */
+    public int runtests() {
+        int total = 0;
+        total += Heuristic.adjacentemptyspace(this);
+        total += Heuristic.OpenPath(this);
+        total += Heuristic.ManhattanDistance(this);
+        total += Heuristic.GoalSpotsFree(this);
+        return total;
     }
 
 
@@ -112,94 +139,98 @@ public class Board {
     }
     
     //Temporary HashCode Method
-		//Uses prime number (31) and multiplies it by Array.hashCode(myBoard)
+        //Uses prime number (31) and multiplies it by Array.hashCode(myBoard)
 
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(BlockElements);
-		result = prime * result + Arrays.hashCode(BlockString);
-		result = prime * result
-				+ ((blocklist == null) ? 0 : blocklist.hashCode());
-		result = prime * result + height;
-		result = prime * result + Arrays.hashCode(myBoard);
-		result = prime * result + width;
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(BlockElements);
+        result = prime * result + Arrays.hashCode(BlockString);
+        result = prime * result
+                + ((blocklist == null) ? 0 : blocklist.hashCode());
+        result = prime * result + height;
+        result = prime * result + Arrays.hashCode(myBoard);
+        result = prime * result + width;
+        return result;
+    }
 
-		/*	---- deepEquals ----
-	    	1. Loops through the input arrays, gets each pair
-	    	2. Analyses the type of each pair
-	    	3. Delegates the equal deciding logic to one of the overloaded Arrays.equals if they are one of the primitive arrays
-	    	4. Delegates recursively to Arrays.deepEquals if it is an Object array
-	    	5. Calls the respective object’s equals, for any other object
-		*/ 
-	@Override
-	public boolean equals(Object obj) {
-		boolean isinBoth = true;
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Board))
-			return false;
-		
-		Board other = (Board) obj;
-		if (blocklist == null) {
-			if (other.blocklist != null)
-				return false;
-		}
-		if (height != other.height)
-			return false;
-		if (width != other.width)
-			return false;
-		if (!Arrays.deepEquals(myBoard, other.myBoard)) 
-			return false;
-		
-		for(int i = 0; i < myBoard.length; i++) {
-			isinBoth = false;
-			for(int j = 0; j < myBoard[i].length; j++) {
-				if(!isinBoth) {
-					if(myBoard[i][j] == other.myBoard[i][j]) {
-						isinBoth = true;
-					}
-				}
-			}
-		}
-		return isinBoth;
-	}
-		/*
-	 *  ------ isOK -----
-	 *  determine if currentConfiguration is outside of row and column boundaries.
-	 */
-	
-	public boolean isOK() {
-		int rowHeight = getWidth();
-		int colHeight = getHeight();
-		Block currentConfig = blocklist.get(0);
-		String[] config = null;
+    
+    /** Overridden comparable method, bases comparisons off of a board's heuristic value. */
+    @Override
+    public int compareTo(Object obj) {
+        Board b = (Board) obj;
+        if (getHeuristic() < b.getHeuristic()) {
+            return -1;
+        } else if (getHeuristic() > b.getHeuristic()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    
+    /** Overridden equals method. Two boards are equal if their blocks are all in
+     * the same positions, and the boards are of equal dimensions. */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Board))
+            return false;
+        
+        Board other = (Board) obj;
+        if (blocklist == null) {
+            if (other.blocklist != null)
+                return false;
+        }
+        if (height != other.height)
+            return false;
+        if (width != other.width)
+            return false;
+        
+        if (blocklist.size() != other.blocklist.size()) {
+            return false;
+        }
+        for (int i = 0; i < blocklist.size(); i ++) {
+            if (!other.blocklist().contains(blocklist.get(i))) {
+                return false;
+            }
+        }        
+        return true;
+    }
+        /*
+     *  ------ isOK -----
+     *  determine if currentConfiguration is outside of row and column boundaries.
+     */
+    
+    public boolean isOK() {
+        int rowHeight = getWidth();
+        int colHeight = getHeight();
+        Block currentConfig = blocklist.get(0);
+        String[] config = null;
 
-		for(int i = 1; i < blocklist.size(); i++) {
-			currentConfig = blocklist.get(i);
-			config = currentConfig.toString().split(" ");
-		}
-		/*
-			Tests to see if the currentConfiguration
-			i.e. [ 1 2 3 4 ] has a number greater than row or col height
-			Row = 5, Col = 5
-			BAD INPUT [ 1 6 2 7 ]
-		
-		 */
-		//Any block outside of Boundary
-		for(int i = 0; i < config.length; i++) {
-			int element = Integer.parseInt(config[i]);
-			if(element > rowHeight || element > colHeight) {
-				return false;
-			}
-		}
+        for(int i = 1; i < blocklist.size(); i++) {
+            currentConfig = blocklist.get(i);
+            config = currentConfig.toString().split(" ");
+        }
+        /*
+            Tests to see if the currentConfiguration
+            i.e. [ 1 2 3 4 ] has a number greater than row or col height
+            Row = 5, Col = 5
+            BAD INPUT [ 1 6 2 7 ]
+        
+         */
+        //Any block outside of Boundary
+        for(int i = 0; i < config.length; i++) {
+            int element = Integer.parseInt(config[i]);
+            if(element > rowHeight || element > colHeight) {
+                return false;
+            }
+        }
 
-		return true;
-	} //end isOK
+        return true;
+    } //end isOK
 
 
 }
