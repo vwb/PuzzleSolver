@@ -108,9 +108,9 @@ public class Heuristic {
 		double soFar = 0.0;
 		for (int i = 0; i < input.getWidth(); i++) {
 			for (int j = 0; j < input.getHeight(); j++) {
-				if ((j == 0 && i == 0) || (i == 0 && input.myBoard[i][j-1] == true) ||
-						(j == 0 && input.myBoard[i-1][j] == true) ||
-								input.myBoard[i-1][j-1] == true) {
+				if ((j == 0 && i == 0) || (i == 0 && input.getBoard()[i][j-1] == true) ||
+						(j == 0 && input.getBoard()[i-1][j] == true) ||
+								input.getBoard()[i-1][j-1] == true) {
 					soFar += whiteSpaceHelper(input, i, j, set, 1.0);
 				}
 			}
