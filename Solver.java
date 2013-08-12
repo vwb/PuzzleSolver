@@ -114,18 +114,23 @@ public class Solver {
             // Check downward movement
             if (block.checkdown(board)) {
                 Board downboard = new Board(board, block, down);
+                downboard.updateboard(block, false);
+                downboard.updateboard(down, true);
                 // If this board was already chosen, ignore it
                 if (!chosenboardset.contains(downboard)) {
                     // If this board is a previously seen, but not chosen
                     // Configuration, return the already-evaluated board from
                     // the HashMap to spare unnecessary heuristic tests
                     if (seenboardmap.containsKey(downboard)) {
+                        
                         priorityqueue.add(seenboardmap.get(downboard));
                     } else {
                         // New board is never before seen, evaluate its heuristic
                         // and mark it as seen; also place in priority queue
                         downboard.setHeuristic(this);
                         seenboardmap.put(downboard, downboard);
+/*                        System.out.println(down.UL().x + " " + down.UL().y + "down " 
+                                + down.LR().x + " " + down.LR().y);*/
                         priorityqueue.add(downboard);
                     }
                 }
@@ -133,12 +138,16 @@ public class Solver {
             // Check upward movement
             if (block.checkup(board)) {
                 Board upboard = new Board(board, block, up);
+                upboard.updateboard(block, false);
+                upboard.updateboard(up, true);
                 if (!chosenboardset.contains(upboard)) {
                     if (seenboardmap.containsKey(upboard)) {
                         priorityqueue.add(seenboardmap.get(upboard));
                     } else {
                         upboard.setHeuristic(this);
                         seenboardmap.put(upboard, upboard);
+/*                        System.out.println(up.UL().x + " " + up.UL().y + " up" 
+                                + up.LR().x + " " + up.LR().y);*/
                         priorityqueue.add(upboard);
                     }
                 }
@@ -147,12 +156,16 @@ public class Solver {
             // Check leftward movement
             if (block.checkleft(board)) {
                 Board leftboard = new Board(board, block, left);
+                leftboard.updateboard(block, false);
+                leftboard.updateboard(left, true);
                 if (!chosenboardset.contains(leftboard)) {
                     if (seenboardmap.containsKey(leftboard)) {
                         priorityqueue.add(seenboardmap.get(leftboard));
                     } else {
                         leftboard.setHeuristic(this);
                         seenboardmap.put(leftboard, leftboard);
+/*                        System.out.println(left.UL().x + " " + left.UL().y + " left" 
+                                + left.LR().x + " " + left.LR().y);*/
                         priorityqueue.add(leftboard);
                     }
                 }
@@ -160,12 +173,17 @@ public class Solver {
             // Check rightward movement
             if (block.checkright(board)) {
                 Board rightboard = new Board(board, block, right);
+                rightboard.updateboard(block, false);
+                rightboard.updateboard(right, true);
                 if (!chosenboardset.contains(rightboard)) {
                     if (seenboardmap.containsKey(rightboard)) {
                         priorityqueue.add(seenboardmap.get(rightboard));
                     } else {
                         rightboard.setHeuristic(this);
                         seenboardmap.put(rightboard, rightboard);
+/*                        System.out.println(right.UL().x + " " + right.UL().y + "right " 
+                                + right.LR().x + " " + right.LR().y);*/
+                        priorityqueue.add(rightboard);
                     }
                 }
             }
@@ -196,6 +214,7 @@ public class Solver {
             initboard.populateBoard(s);
             s = solve.boardinput.readLine();
         }
+        System.out.println(initboard.getHeight() + " " + initboard.getWidth());
         // Add initial board to the HashSet
         initboard.setHeuristic(solve);
         solve.seenboardmap.put(initboard, initboard);
@@ -224,6 +243,8 @@ public class Solver {
         solve.generatemoves(initboard);        
         Board current = priorityqueue.poll();
         solve.currentpath.add(current.getdefine());
+
+        System.out.println("Picked first board: " + current.getdefine());
         
         
         // While there are still legal moves to be made
@@ -232,14 +253,17 @@ public class Solver {
             priorityqueue.clear();
             // Generate board's possible moves, select best one
             solve.generatemoves(current);
+            //System.out.println(priorityqueue.size());
             // If no moves were generated, all of this board's moves
             // Were previously seen; "dead end"; puzzle unsolvable
             if (priorityqueue.isEmpty()) {
+                System.out.println("No more moves");
                 System.exit(1);
             }
             current = priorityqueue.poll();
+            solve.chosenboardset.add(current);
             solve.currentpath.addFirst((current.getdefine()));
-            
+            //System.out.println("Not solved");
         }
         
         // Exited while loop, solution was found, print out
