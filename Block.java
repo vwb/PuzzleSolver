@@ -80,7 +80,7 @@ public class Block {
     public boolean checkdown (Board board) {
         boolean[][] array = board.getBoard();
         int startrow = LR.x+1;
-        if (startrow > board.getHeight()) {
+        if (startrow > board.getHeight() - 1) {
             return false; //Moved out of board
         }
         int startcol = UL.y;
@@ -127,7 +127,7 @@ public class Block {
         int startrow = UL.x;
 
         int startcol = LR.y+1;
-        if (startcol > board.getWidth()) {
+        if (startcol > board.getWidth() - 1) {
             return false; //moved out of board
         }
         for (int i = startrow; i < startrow + height; i ++) {
