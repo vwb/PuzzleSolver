@@ -170,29 +170,21 @@ public class Heuristic {
 		double soFar = 0.0;
 		for (int i = 0; i < input.getWidth(); i++) {
 			for (int j = 0; j < input.getHeight(); j++) {
-//				if ((i == 0 && val[i][j-1] == true) ||
-//						(j == 0 && val[i-1][j] == true) ||
-//						val[i-1][j-1] == true) {
-				System.out.println("x =  " + i + " and y == " + j);
 				if (j == 0 && i == 0) {
-					System.out.println("x and y are zero");
 					soFar += whiteSpaceHelper(input, i, j, set, 1.0);
 				}
 				if (i > 0 && j == 0) {
 					if (val[i-1][j] == true) {
-						System.out.println("y is zero and x - 1 is true");
 						soFar += whiteSpaceHelper(input, i, j, set, 1.0);
 					}
 				}
 				if (i == 0 && j > 0) {
 					if (val[i][j-1] == true) {
-						System.out.println("x is zero and y - 1 is true");
 						soFar += whiteSpaceHelper(input, i, j, set, 1.0);
 					}
 				}
 				else if (i > 0 && j > 0) {
 					if (val[i-1][j-1] == true) {
-						System.out.println("x - 1 and y - 1 are true");
 						soFar += whiteSpaceHelper(input, i, j, set, 1.0);
 					}
 				}
@@ -217,40 +209,25 @@ public class Heuristic {
 			return 0;
 		}
 		set.add(new Point(x, y));
-		if ( x == b.getWidth() - 1 && y == b.getHeight() - 1) {
-			System.out.println("1");
-			
+		if ( x == b.getWidth() - 1 && y == b.getHeight() - 1) {			
 			return soFar;
 		}
 		if( x == b.getWidth() - 1 && y != b.getHeight() - 1) {
-			System.out.println("2");
-			System.out.println("x:  " + x + "y:   " + y);
-
 			return soFar + whiteSpaceHelper(b, x, y + 1, set, 1.5 + soFar);
 		}
 		if( y == b.getHeight() - 1 && x != b.getWidth() - 1) {
-			System.out.println("3");
-
 			return soFar + whiteSpaceHelper(b, x + 1, y, set, 1.5 + soFar);
 		}
 		if(vals[x+1][y] == true && vals[x][y+1] == true) {
-			System.out.println("4");
-
 			return soFar;
 		}
 		if (vals[x][y+1] == true) {
-			System.out.println("5");
-
 			return soFar + whiteSpaceHelper(b, x + 1, y, set, 1.5 + soFar);
 		}
 		if (vals[x+1][y] == true) {
-			System.out.println("6");
-
 			return soFar + whiteSpaceHelper(b, x, y + 1, set, 1.5 + soFar);
 		}
 		else {
-			System.out.println("7");
-
 			return soFar + whiteSpaceHelper(b, x + 1, y, set, 1.5 + soFar) + 
 					whiteSpaceHelper(b, x, y + 1, set, 1.5 + soFar);
 		}
