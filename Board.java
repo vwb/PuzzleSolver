@@ -55,7 +55,7 @@ public class Board implements Comparable {
     /** Set heuristics for a board; only done if configuration is new
      * and consequently worthy of checking */
     public void setHeuristic(Solver s) {
-        heuristic = runtests(s);
+        heuristic = 0;
     }
     
     public boolean[][] getBoard(){
@@ -67,9 +67,14 @@ public class Board implements Comparable {
      * except the single difference of one of its blocks being shifted
      * to a new position.  */
     public Board(Board oldboard, Block oldblock, Block newblock) {
-        myBoard = oldboard.myBoard;
         height = oldboard.height;
         width = oldboard.width;
+        myBoard = new boolean[height][width];
+        for (int i = 0; i < height; i ++) {
+            for (int k = 0; k < width; k ++) {
+                myBoard[i][k] = oldboard.getBoard()[i][k];
+            }
+        }
         
         blocklist = new ArrayList<Block>(oldboard.blocklist);
         blocklist.remove(oldblock);
@@ -78,9 +83,6 @@ public class Board implements Comparable {
         definingmove = "" + oldblock.UL().x + " " + oldblock.UL().y + " "
                         + newblock.UL().x + " " + newblock.UL().y;
         
-        
-        this.updateboard(oldblock, false);
-        this.updateboard(newblock, true);
     }
     
     /** Given a certain change of blocks, update the boolean array
@@ -92,8 +94,8 @@ public class Board implements Comparable {
         int botrow = block.LR().x;
         int botcol = block.LR().y;
         
-        for (int i = toprow; i <= botrow + block.height; i++) {
-            for (int j = topcol; j <= botcol + block.width; j++) {
+        for (int i = toprow; i <= botrow; i++) {
+            for (int j = topcol; j <= botcol; j++) {
                 myBoard[i][j] = bool;
             }
         }
@@ -103,10 +105,10 @@ public class Board implements Comparable {
      * heuristic value with each test. */
     public int runtests(Solver s) {
         int total = 0;
-        total += Heuristic.adjacentemptyspace(this, s);
+        //total += Heuristic.adjacentemptyspace(this, s);
         total += Heuristic.OpenPath(this, s);
-        total += Heuristic.ManhattanDistance(this, s);
-        total += Heuristic.GoalSpotsFree(this, s);
+        //total += Heuristic.ManhattanDistance(this, s);
+        //total += Heuristic.GoalSpotsFree(this, s);
         return total;
     }
 
