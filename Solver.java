@@ -104,6 +104,9 @@ public class Solver {
     public void generatemoves (Board board) {
         ArrayList<Block> allblocks = board.blocklist();
         for (int i = 0; i < allblocks.size(); i ++) {
+            /*if (priorityqueue.size() > 1) {
+                break;
+            }*/
             Block block = allblocks.get(i);
             
             Block down = block.movedown();
@@ -146,7 +149,7 @@ public class Solver {
                     } else {
                         upboard.setHeuristic(this);
                         seenboardmap.put(upboard, upboard);
-/*                        System.out.println(up.UL().x + " " + up.UL().y + " up" 
+/*                      System.out.println(up.UL().x + " " + up.UL().y + " up" 
                                 + up.LR().x + " " + up.LR().y);*/
                         priorityqueue.add(upboard);
                     }
@@ -245,9 +248,8 @@ public class Solver {
         solve.currentpath.add(current.getdefine());
 
         System.out.println("Picked first board: " + current.getdefine());
-        
-        
         // While there are still legal moves to be made
+
         while (!solve.compareToGoal(current)) {
             // Clear queue for new set of possible moves
             priorityqueue.clear();
