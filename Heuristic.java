@@ -213,23 +213,23 @@ public class Heuristic {
 			return soFar;
 		}
 		if( x == b.getWidth() - 1 && y != b.getHeight() - 1) {
-			return soFar + whiteSpaceHelper(b, x, y + 1, set, .75 + soFar);
+			return soFar + whiteSpaceHelper(b, x, y + 1, set, .35 + soFar);
 		}
 		if( y == b.getHeight() - 1 && x != b.getWidth() - 1) {
-			return soFar + whiteSpaceHelper(b, x + 1, y, set, .75 + soFar);
+			return soFar + whiteSpaceHelper(b, x + 1, y, set, .35 + soFar);
 		}
 		if(vals[x+1][y] == true && vals[x][y+1] == true) {
 			return soFar;
 		}
 		if (vals[x][y+1] == true) {
-			return soFar + whiteSpaceHelper(b, x + 1, y, set, .75 + soFar);
+			return soFar + whiteSpaceHelper(b, x + 1, y, set, .35 + soFar);
 		}
 		if (vals[x+1][y] == true) {
-			return soFar + whiteSpaceHelper(b, x, y + 1, set, .75 + soFar);
+			return soFar + whiteSpaceHelper(b, x, y + 1, set, .35 + soFar);
 		}
 		else {
-			return soFar + whiteSpaceHelper(b, x + 1, y, set, .75 + soFar) + 
-					whiteSpaceHelper(b, x, y + 1, set, .75 + soFar);
+			return soFar + whiteSpaceHelper(b, x + 1, y, set, .35 + soFar) + 
+					whiteSpaceHelper(b, x, y + 1, set, .35 + soFar);
 		}
 
 	}
