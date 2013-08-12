@@ -209,8 +209,41 @@ public class Heuristic {
 		}
 
 	}
-
-	public static int GoalSpotsFree(Board input){
-		return 0;
+	public static int GoalSpotsFree(Board input) {
+		boolean[][] val = input.getBoard();
+		int weight = 0;
+		//Get all blocks on input Board
+		for(int i = 0; i < Solver.goalconfigs.size(); i++) {
+			Block goal = Solver.goalconfigs.get(i);
+			int ULx = goal.UL.x;
+			int ULy = goal.UL.y;
+			int LRx = goal.LR.x;
+			int LRy = goal.LR.y;
+			for(int j = 0; j < input.blocklist.size(); j++) {
+				//If goal and temp are same position 
+				Block check = input.blocklist.get(j);
+				if(check.equals(goal)) {
+					//Same size blocks ==> Highest Heuristic
+					weight += 10;
+				}
+				/*
+				 * If the block is empty, add medium
+				 */
+				if (val[ULx][ULy] == false && val[LRx][LRy] == false) {
+					weight += 5;
+				}
+				/*
+				 * If block is partially occupied.... do nothing
+				 */
+				if(val[ULx][ULy] == true && val[LRx][LRy] != true) {
+					//I.E. we know a block is in the configuration spots
+					weight -= 3;
+				}
+				else if(val[ULx][ULy] == false && val[LRx][LRy] != false) {
+					weight -= 3;
+				}
+			}
+		}		
+		return weight; 
 	}
 }
