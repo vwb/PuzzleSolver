@@ -87,71 +87,71 @@ public class Heuristic {
 		}
 		return 0;
 	}
-
-		public static int ManhattanDistance(Board input, Solver s){
-		ArrayList<Block> goal = s.goalconfigs;
-		ArrayList<Block> blocks = input.blocklist();
-		HashMap<Block, Integer> seenSoFar = new HashMap<Block, Integer>();
-		int sum = 0;
-		int area = input.getHeight() * input.getWidth();
-		double frac = (double) sum / (double) area;
-		
-		for (int i = 0; i < blocks.size(); i++) {
-			for (int j = 0; j < goal.size(); j++) {
-				if (goal.get(j).height == blocks.get(i).height &&
-						goal.get(j).width == blocks.get(i).width) {
-					sum += manhattanHelper(blocks.get(i), goal.get(j), seenSoFar);
-				}
+	
+	public static int ManhattanDistance(Board input, Solver s){
+	ArrayList<Block> goal = s.goalconfigs;
+	ArrayList<Block> blocks = input.blocklist();
+	HashMap<Block, Integer> seenSoFar = new HashMap<Block, Integer>();
+	int sum = 0;
+	int area = input.getHeight() * input.getWidth();
+	double frac = (double) sum / (double) area;
+	
+	for (int i = 0; i < blocks.size(); i++) {
+		for (int j = 0; j < goal.size(); j++) {
+			if (goal.get(j).height == blocks.get(i).height &&
+					goal.get(j).width == blocks.get(i).width) {
+				sum += manhattanHelper(blocks.get(i), goal.get(j), seenSoFar);
 			}
-		}
-		
-		if (0.0 <= frac && frac <= 0.1) {
-			return 100;
-		}
-		if (.1 <= frac && frac <= .2) {
-			return 90;
-		}
-		if (.2 <= frac && frac <= .3) {
-			return 80;
-		}
-		if (.3 <= frac && frac <= .4) {
-			return 70;
-		}
-		if (.4 <= frac && frac <= .5) {
-			return 60;
-		}
-		if (.5 <= frac && frac <= .6) {
-			return 50;
-		}
-		if (.6 <= frac && frac <= .7) {
-			return 40;
-		}
-		if (.7 <= frac && frac <= .8) {
-			return 30;
-		}
-		if (.8 <= frac && frac <= .9) {
-			return 20;
-		}
-		else {
-			return 0;
 		}
 	}
 	
-	static private int manhattanHelper(Block block, Block goal, HashMap map) {
-		int x = Math.max(block.UL().x, goal.UL().x) - Math.min(block.UL().x, goal.UL().x);
-		int y = Math.max(block.UL().y, goal.UL().y) - Math.min(block.UL().y, goal.UL().y);
-		int sum = x + y;
-		if (map.containsKey(block)) {
-			if (sum < (Integer) map.get(block)) {
-				map.put(block, sum);
-			}
-			else {
-				sum = (Integer) map.get(block);
-			}
-		}
-		return sum;
+	if (0.0 <= frac && frac <= 0.1) {
+		return 100;
 	}
+	if (.1 <= frac && frac <= .2) {
+		return 90;
+	}
+	if (.2 <= frac && frac <= .3) {
+		return 80;
+	}
+	if (.3 <= frac && frac <= .4) {
+		return 70;
+	}
+	if (.4 <= frac && frac <= .5) {
+		return 60;
+	}
+	if (.5 <= frac && frac <= .6) {
+		return 50;
+	}
+	if (.6 <= frac && frac <= .7) {
+		return 40;
+	}
+	if (.7 <= frac && frac <= .8) {
+		return 30;
+	}
+	if (.8 <= frac && frac <= .9) {
+		return 20;
+	}
+	else {
+		return 0;
+	}
+}
 
+static private int manhattanHelper(Block block, Block goal, HashMap map) {
+	int x = Math.max(block.UL().x, goal.UL().x) - Math.min(block.UL().x, goal.UL().x);
+	int y = Math.max(block.UL().y, goal.UL().y) - Math.min(block.UL().y, goal.UL().y);
+	int sum = x + y;
+	if (map.containsKey(block)) {
+		if (sum < (Integer) map.get(block)) {
+			map.put(block, sum);
+		}
+		else {
+			sum = (Integer) map.get(block);
+		}
+	}
+	return sum;
+}
+	
 	/*
 	 * 				-----AdjacentEmptySpace-----
 	 * 
@@ -162,16 +162,17 @@ public class Heuristic {
 	 * 		is returned after summing the entire board. We will then use this
 	 * 		method to determine which Boards are most likely to solve a puzzle.
 	 */
-
-	public static double adjacentemptyspace(Board input){
+	
+	public static double adjacentemptyspace(Board input, Solver sol){
 		//HashSet of Point Objects to reduce redundancy of already seen Points.
 		HashSet<Point> set = new HashSet<Point>();
+		boolean[][] val = input.getBoard();
 		double soFar = 0.0;
 		for (int i = 0; i < input.getWidth(); i++) {
 			for (int j = 0; j < input.getHeight(); j++) {
-				if ((j == 0 && i == 0) || (i == 0 && input.getBoard()[i][j-1] == true) ||
-						(j == 0 && input.getBoard()[i-1][j] == true) ||
-								input.getBoard()[i-1][j-1] == true) {
+				if ((j == 0 && i == 0) || (i == 0 && val[i][j-1] == true) ||
+						(j == 0 && val[i-1][j] == true) ||
+								val[i-1][j-1] == true) {
 					soFar += whiteSpaceHelper(input, i, j, set, 1.0);
 				}
 			}
@@ -187,8 +188,8 @@ public class Heuristic {
 	 * 			-- Identifys Upper Left corners of boxes
 	 * 			-- returns a running sum of best case white space.
 	 */
-
-
+	
+	
 	public static double whiteSpaceHelper(Board b, int x, int y, HashSet<Point> set, double soFar) {
 		boolean[][] vals = b.getBoard();
 		if (set.contains(new Point(x, y))) {
@@ -209,19 +210,20 @@ public class Heuristic {
 		}
 
 	}
-	public static int GoalSpotsFree(Board input) {
+	
+	public static int GoalSpotsFree(Board input, Solver sol) {
 		boolean[][] val = input.getBoard();
 		int weight = 0;
 		//Get all blocks on input Board
-		for(int i = 0; i < Solver.goalconfigs.size(); i++) {
-			Block goal = Solver.goalconfigs.get(i);
-			int ULx = goal.UL.x;
-			int ULy = goal.UL.y;
-			int LRx = goal.LR.x;
-			int LRy = goal.LR.y;
-			for(int j = 0; j < input.blocklist.size(); j++) {
+		for(int i = 0; i < sol.goalconfigs.size(); i++) {
+			Block goal = sol.goalconfigs.get(i);
+			int ULx = goal.UL().x;
+			int ULy = goal.UL().y;
+			int LRx = goal.LR().x;
+			int LRy = goal.LR().y;
+			for(int j = 0; j < input.blocklist().size(); j++) {
 				//If goal and temp are same position 
-				Block check = input.blocklist.get(j);
+				Block check = input.blocklist().get(j);
 				if(check.equals(goal)) {
 					//Same size blocks ==> Highest Heuristic
 					weight += 10;
@@ -244,6 +246,6 @@ public class Heuristic {
 				}
 			}
 		}		
-		return weight; 
+		return weight; //No block in spot, return weight;
 	}
 }
