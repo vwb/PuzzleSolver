@@ -1,3 +1,5 @@
+package proj3;
+
 import java.util.*;
 
 /** Sliding block puzzle solver that utilizes a greedy search algorithm
@@ -31,7 +33,7 @@ public class Solver {
     /** Current path being navigated in the graph. Draws from the fringe
      * (priority queue) to grow or shrink it. */
     private LinkedList<String> currentpath;
-    
+        
     public LinkedList<String> currentpath() {
         return currentpath;
     }
@@ -102,10 +104,9 @@ public class Solver {
      * one unit in all directions. If that move is possible, and that configuration
      * is completely new, then add it to the hashSet and priorityQueue */
     public void generatemoves (Board board) {
+    	boolean generateDebug = false;
         ArrayList<Block> allblocks = board.blocklist();
-        System.out.println(chosenboardset.size());
         for (int i = 0; i < allblocks.size(); i ++) {
-            System.out.println("Loop: " + i + "of allblocks");
             /*if (priorityqueue.size() > 1) {
                 break;
             }*/
@@ -127,20 +128,19 @@ public class Solver {
                     // Configuration, return the already-evaluated board from
                     // the HashMap to spare unnecessary heuristic tests
                     if (seenboardmap.containsKey(downboard)) {
-                        System.out.println("Re-hashed board down");
+                        
                         priorityqueue.add(seenboardmap.get(downboard));
                     } else {
                         // New board is never before seen, evaluate its heuristic
                         // and mark it as seen; also place in priority queue
                         downboard.setHeuristic(this);
                         seenboardmap.put(downboard, downboard);
-/*                        System.out.println(down.UL().x + " " + down.UL().y + "down " 
-                                + down.LR().x + " " + down.LR().y);*/
+                        if(generateDebug) {
+                        	System.out.println(down.UL().x + " " + down.UL().y + "down " 
+                                    + down.LR().x + " " + down.LR().y);
+                        }
                         priorityqueue.add(downboard);
                     }
-                }
-                else {
-                    System.out.println("Ignoring already chosen board");
                 }
             }
             // Check upward movement
@@ -150,13 +150,14 @@ public class Solver {
                 upboard.updateboard(up, true);
                 if (!chosenboardset.contains(upboard)) {
                     if (seenboardmap.containsKey(upboard)) {
-                        System.out.println("Re-hashed board up");
                         priorityqueue.add(seenboardmap.get(upboard));
                     } else {
                         upboard.setHeuristic(this);
                         seenboardmap.put(upboard, upboard);
-/*                      System.out.println(up.UL().x + " " + up.UL().y + " up" 
-                                + up.LR().x + " " + up.LR().y);*/
+                        if(generateDebug) {
+                        	System.out.println(up.UL().x + " " + up.UL().y + " up" 
+                                + up.LR().x + " " + up.LR().y);
+                        }
                         priorityqueue.add(upboard);
                     }
                 }
@@ -169,13 +170,14 @@ public class Solver {
                 leftboard.updateboard(left, true);
                 if (!chosenboardset.contains(leftboard)) {
                     if (seenboardmap.containsKey(leftboard)) {
-                        System.out.println("Re-hashed map left");
                         priorityqueue.add(seenboardmap.get(leftboard));
                     } else {
                         leftboard.setHeuristic(this);
                         seenboardmap.put(leftboard, leftboard);
-/*                        System.out.println(left.UL().x + " " + left.UL().y + " left" 
-                                + left.LR().x + " " + left.LR().y);*/
+                        if(generateDebug) {
+                        	System.out.println(left.UL().x + " " + left.UL().y + " left" 
+                                    + left.LR().x + " " + left.LR().y);	
+                        }
                         priorityqueue.add(leftboard);
                     }
                 }
@@ -187,13 +189,14 @@ public class Solver {
                 rightboard.updateboard(right, true);
                 if (!chosenboardset.contains(rightboard)) {
                     if (seenboardmap.containsKey(rightboard)) {
-                        System.out.println("Re-hashed board right");
                         priorityqueue.add(seenboardmap.get(rightboard));
                     } else {
                         rightboard.setHeuristic(this);
                         seenboardmap.put(rightboard, rightboard);
-/*                        System.out.println(right.UL().x + " " + right.UL().y + "right " 
-                                + right.LR().x + " " + right.LR().y);*/
+                        if(generateDebug) {
+                        	System.out.println(right.UL().x + " " + right.UL().y + "right " 
+                                + right.LR().x + " " + right.LR().y);
+                        }
                         priorityqueue.add(rightboard);
                     }
                 }
