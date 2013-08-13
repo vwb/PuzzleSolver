@@ -1,24 +1,30 @@
+
 import java.util.*;
 import java.awt.*;
 
 public class Heuristic {
+	
 
 	public Heuristic(){
 	}
 
 	public static int OpenPath(Board input, Solver sol){
 		int myValue = 0;
+		boolean openPathDebug = false;
 		for (int i = 0 ; i < input.blocklist().size() ; i++){
 			Block temp = input.blocklist().get(i);
-			boolean check = true;
 			//compare temp to the goal blocks. if same width and height check if clear path
 			for (int j = 0; j < sol.goalconfigs.size(); j++){
 				Block goal = sol.goalconfigs.get(j);
 				myValue += OpenHelper(input, temp, goal);
-				System.out.println("This is myValue: " + myValue);
+				if(openPathDebug) {
+					System.out.println("This is myValue: " + myValue);
+				}
 			}
 		}
-		System.out.println("This is myValue right before return: " + myValue);
+		if(openPathDebug) {
+			System.out.println("This is myValue right before return: " + myValue);
+		}
 		return myValue;
 	}
 
