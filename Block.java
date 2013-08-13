@@ -56,14 +56,14 @@ public class Block {
     /** Returns true if a block can move up one space,
      * i.e. all slots are unoccupied. */
     public boolean checkup (Board board) {
-        boolean[][] array = board.getBoard();
+
         int startrow = UL.x-1;
         if (startrow < 0) {
             return false; //Moved out of board
         }
         int startcol = UL.y;
         for (int i = startcol; i < startcol + width; i ++) {
-            if (array[startrow][i] == true) { // Slot is already occupied
+            if (board.getBoard()[startrow][i] == true) { // Slot is already occupied
                 return false;
             }
         }
@@ -78,14 +78,13 @@ public class Block {
     /** Returns true if a block can move down one space,
      * i.e. all slots below are unoccupied. */
     public boolean checkdown (Board board) {
-        boolean[][] array = board.getBoard();
         int startrow = LR.x+1;
         if (startrow > board.getHeight() - 1) {
             return false; //Moved out of board
         }
         int startcol = UL.y;
         for (int i = startcol; i < startcol + width; i ++) {
-            if (array[startrow][i] == true) { // Slot is already occupied
+            if (board.getBoard()[startrow][i] == true) { // Slot is already occupied
                 return false;
             }
         }
@@ -100,7 +99,7 @@ public class Block {
     /** Returns true if a block can move left one space,
      * i.e. all slots are unoccupied. */
     public boolean checkleft (Board board) {
-        boolean[][] array = board.getBoard();
+
         int startrow = UL.x;
 
         int startcol = UL.y-1;
@@ -108,7 +107,7 @@ public class Block {
             return false; //moved out of board
         }
         for (int i = startrow; i < startrow + height; i ++) {
-            if (array[i][startcol] == true) { // Slot is already occupied
+            if (board.getBoard()[i][startcol] == true) { // Slot is already occupied
                 return false;
             }
         }
@@ -123,7 +122,7 @@ public class Block {
     /** Returns true if a block can move left one space,
      * i.e. all slots are unoccupied. */
     public boolean checkright (Board board) {
-        boolean[][] array = board.getBoard();
+
         int startrow = UL.x;
 
         int startcol = LR.y+1;
@@ -131,7 +130,7 @@ public class Block {
             return false; //moved out of board
         }
         for (int i = startrow; i < startrow + height; i ++) {
-            if (array[i][startcol] == true) { // Slot is already occupied
+            if (board.getBoard()[i][startcol] == true) { // Slot is already occupied
                 return false;
             }
         }
@@ -149,5 +148,21 @@ public class Block {
         boolean uppercheck = other.UL.equals(UL);
         boolean lowercheck = other.LR.equals(LR);
         return (uppercheck & lowercheck);
+    }
+    
+    /** Block hashCode; used in iteration of a board's blocks to create
+     * a board's hash  */
+    public int hashCode() {
+        final int prime = 37;
+        final int prime2 = 31;
+        final int prime3 = 17;
+        final int prime4 = 29;
+        
+        int result = 0;
+        result += prime * UL().x;
+        result += prime2 * UL().y;
+        result += prime3 * LR().x;
+        result += prime4 * LR().y;
+        return result;
     }
 }
