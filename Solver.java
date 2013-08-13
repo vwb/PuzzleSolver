@@ -1,4 +1,3 @@
-
 import java.util.*;
 
 /** Sliding block puzzle solver that utilizes a greedy search algorithm
@@ -16,6 +15,10 @@ public class Solver {
     /** ArrayList of goal configurations.
      * Each element is a string representing a block in the goal board. */
     public ArrayList<Block> goalconfigs;
+    
+    /** A stack holding onto the current path, so if the program dead ends it can
+     * backtrack and try other possible moves. */
+    public Stack<Board> previousMoveStack;
     
     /** HashMap containing all seen board configurations.
      * Eliminates redundancy in creating board objects
@@ -59,6 +62,7 @@ public class Solver {
         chosenboardset = new HashSet<Board>();
         currentpath = new LinkedList<String>();
         priorityqueue = new PriorityQueue<Board>();
+        previousMoveStack = new Stack<Board>();
     }
     
     
@@ -268,10 +272,16 @@ public class Solver {
             //System.out.println(priorityqueue.size());
             // If no moves were generated, all of this board's moves
             // Were previously seen; "dead end"; puzzle unsolvable
-            if (priorityqueue.isEmpty()) {
-                System.out.println("No more moves");
-                System.exit(1);
+            if (priorityqueue.isEmpty()){
+            	if (solve.previousMoveStack.isEmpty()){
+            		System.out.println("No more moves");
+            		System.exit(1);
+            	}
+                current = solve.previousMoveStack.pop();
+                solve.currentpath().removeLast();
+                continue;
             }
+            solve.previousMoveStack.push(current);
             current = priorityqueue.poll();
             solve.chosenboardset.add(current);
             solve.currentpath.addFirst((current.getdefine()));
