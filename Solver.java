@@ -103,7 +103,9 @@ public class Solver {
      * is completely new, then add it to the hashSet and priorityQueue */
     public void generatemoves (Board board) {
         ArrayList<Block> allblocks = board.blocklist();
+        System.out.println(chosenboardset.size());
         for (int i = 0; i < allblocks.size(); i ++) {
+            System.out.println("Loop: " + i + "of allblocks");
             /*if (priorityqueue.size() > 1) {
                 break;
             }*/
@@ -125,7 +127,7 @@ public class Solver {
                     // Configuration, return the already-evaluated board from
                     // the HashMap to spare unnecessary heuristic tests
                     if (seenboardmap.containsKey(downboard)) {
-                        
+                        System.out.println("Re-hashed board down");
                         priorityqueue.add(seenboardmap.get(downboard));
                     } else {
                         // New board is never before seen, evaluate its heuristic
@@ -137,6 +139,9 @@ public class Solver {
                         priorityqueue.add(downboard);
                     }
                 }
+                else {
+                    System.out.println("Ignoring already chosen board");
+                }
             }
             // Check upward movement
             if (block.checkup(board)) {
@@ -145,6 +150,7 @@ public class Solver {
                 upboard.updateboard(up, true);
                 if (!chosenboardset.contains(upboard)) {
                     if (seenboardmap.containsKey(upboard)) {
+                        System.out.println("Re-hashed board up");
                         priorityqueue.add(seenboardmap.get(upboard));
                     } else {
                         upboard.setHeuristic(this);
@@ -163,6 +169,7 @@ public class Solver {
                 leftboard.updateboard(left, true);
                 if (!chosenboardset.contains(leftboard)) {
                     if (seenboardmap.containsKey(leftboard)) {
+                        System.out.println("Re-hashed map left");
                         priorityqueue.add(seenboardmap.get(leftboard));
                     } else {
                         leftboard.setHeuristic(this);
@@ -180,6 +187,7 @@ public class Solver {
                 rightboard.updateboard(right, true);
                 if (!chosenboardset.contains(rightboard)) {
                     if (seenboardmap.containsKey(rightboard)) {
+                        System.out.println("Re-hashed board right");
                         priorityqueue.add(seenboardmap.get(rightboard));
                     } else {
                         rightboard.setHeuristic(this);
