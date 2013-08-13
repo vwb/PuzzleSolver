@@ -1,11 +1,12 @@
-import java.util.*;
+33.goal33.goalimport java.util.*;
 
 /** Sliding block puzzle solver that utilizes a greedy search algorithm
  * and value-based heuristics to find the (possibly nonexistant) solution
  * configuration.  */
 
 public class Solver {
-
+	static boolean output = true;
+	
     /** InputSource object used to parse goal configuration file. */
     private InputSource goalinput;
     
@@ -43,7 +44,7 @@ public class Solver {
     /** Priority Queue containing a prioritized set of potential boards.
      * Based on heuristic evaluation boards are ranked as more or less desirable,
      * and consequently selected to eventually find the goal configuration. */
-    public static PriorityQueue<Board> priorityqueue;
+    public PriorityQueue<Board> priorityqueue;
     
     /** Create a Solver object's fields based on program inputs. */
     public Solver (String[] args) {
@@ -75,16 +76,20 @@ public class Solver {
         // myBlocks is unimplemented and represents the ArrayList of
         // blocks stored in each Board object
         boolean[] results = new boolean[goalconfigs.size()];
-        boolean result = false;
+        if(output)
+        	System.out.println(goalconfigs.size());
+        	System.out.println(b.blocklist().size());
+        boolean result = true;
         for (int i = 0; i < goalconfigs.size(); i++) {
             results[i] = boardContainsGoalBlock(b, goalconfigs.get(i));
         }
         if (results.length == 1) {
             return results[0];
         }
-        for (int i = 1; i < results.length; i++) {
-            result = results[i] && results[i-1];
+        for (int i = 0; i < results.length; i++) {
+            result = result && results[i];
         }
+        System.out.println(result);
         return result;
     }
     
@@ -95,10 +100,13 @@ public class Solver {
      */
     private static boolean boardContainsGoalBlock(Board b, Block goalblock) {
         for (int j = 0; j < b.blocklist().size(); j++) {
-            if (b.blocklist().get(j).equals(goalblock)) {
+        	if (b.blocklist().get(j).equals(goalblock)) {
+            	//if(output)
+            		//System.out.println( "" + goalblock.UL() + goalblock.LR() +  " " + b.blocklist().get(j).LR()+ b.blocklist().get(j).LR());
                 return true;
             }
         }
+        System.out.println("I am returning false for goalblock: " + goalblock.UL() + goalblock.LR());
         return false;
     }
     
@@ -231,7 +239,7 @@ public class Solver {
             initboard.populateBoard(s);
             s = solve.boardinput.readLine();
         }
-        System.out.println(initboard.getHeight() + " " + initboard.getWidth());
+        //System.out.println(initboard.getHeight() + " " + initboard.getWidth());
         // Add initial board to the HashSet
         initboard.setHeuristic(solve);
         solve.seenboardmap.put(initboard, initboard);
@@ -254,47 +262,56 @@ public class Solver {
 
         // Initial board is already the solution? Guess you're done, congrats
         if (solve.compareToGoal(initboard)) {
-            System.exit(1);
+            System.exit(0);
         }
         // Populate priority queue with initial move choices, select best one
         solve.generatemoves(initboard);        
-        Board current = priorityqueue.poll();
+        Board current = solve.priorityqueue.poll();
         solve.currentpath.add(current.getdefine());
 
-        System.out.println("Picked first board: " + current.getdefine());
+        //System.out.println("Picked first board: " + current.getdefine());
         // While there are still legal moves to be made
 
         while (!solve.compareToGoal(current)) {
             // Clear queue for new set of possible moves
-            priorityqueue.clear();
+            solve.priorityqueue.clear();
             // Generate board's possible moves, select best one
-            solve.generatemoves(current);
-            //System.out.println(priorityqueue.size());
+            //System.out.println(solve.priorityqueue.size());
             // If no moves were generated, all of this board's moves
             // Were previously seen; "dead end"; puzzle unsolvable
-            if (priorityqueue.isEmpty()){
-            	if (solve.previousMoveStack.isEmpty()){
-            		System.out.println("No more moves");
+            if (solve.priorityqueue.isEmpty()){
+            	//System.out.println("Queue is empty");
+            	if (solve.previousMoveStack.size() == 0){
+            		//System.out.println("No more moves");
             		System.exit(1);
             	}
                 current = solve.previousMoveStack.pop();
+                //System.out.println(solve.previousMoveStack.size());
                 solve.currentpath().removeLast();
                 continue;
             }
             solve.previousMoveStack.push(current);
-            current = priorityqueue.poll();
+            current = solve.priorityqueue.poll();
+            solve.generatemoves(current);
             solve.chosenboardset.add(current);
             solve.currentpath.addFirst((current.getdefine()));
             //System.out.println("Not solved");
         }
-        
+//        	for (int k = 0; k < solve.goalconfigs.size(); k ++) {
+//        		if (output)
+//        			System.out.println("" + solve.goalconfigs.get(k).UL() + 
+//        				solve.goalconfigs.get(k).LR());
+//        	}
+         output = true;
+        //System.out.println("Isgoal : " + solve.compareToGoal(current));
         // Exited while loop, solution was found, print out
         // Path taken
         while (!solve.currentpath.isEmpty()) {
-            System.out.println(solve.currentpath.getFirst());
+        	System.out.println(solve.currentpath.getFirst());
             solve.currentpath.removeFirst();
         }
 
+        System.exit(0);
             
         
     }
