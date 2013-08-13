@@ -55,7 +55,7 @@ public class Board implements Comparable {
     /** Set heuristics for a board; only done if configuration is new
      * and consequently worthy of checking */
     public void setHeuristic(Solver s) {
-        heuristic = 0;
+        heuristic = runtests(s);
     }
     
     public boolean[][] getBoard(){
@@ -70,6 +70,7 @@ public class Board implements Comparable {
         height = oldboard.height;
         width = oldboard.width;
         myBoard = new boolean[height][width];
+        heuristic = 0;
         for (int i = 0; i < height; i ++) {
             for (int k = 0; k < width; k ++) {
                 myBoard[i][k] = oldboard.getBoard()[i][k];
@@ -106,8 +107,8 @@ public class Board implements Comparable {
     public int runtests(Solver s) {
         int total = 0;
         //total += Heuristic.adjacentemptyspace(this, s);
-        total += Heuristic.OpenPath(this, s);
-        //total += Heuristic.ManhattanDistance(this, s);
+        //total += Heuristic.OpenPath(this, s);
+        total += Heuristic.ManhattanDistance(this, s);
         //total += Heuristic.GoalSpotsFree(this, s);
         return total;
     }
@@ -157,13 +158,16 @@ public class Board implements Comparable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(BlockElements);
+        /*result = prime * result + Arrays.hashCode(BlockElements);
         result = prime * result + Arrays.hashCode(BlockString);
         result = prime * result
                 + ((blocklist == null) ? 0 : blocklist.hashCode());
         result = prime * result + height;
         result = prime * result + Arrays.hashCode(myBoard);
-        result = prime * result + width;
+        result = prime * result + width;*/
+        for (int i = 0; i < blocklist().size(); i ++) {
+            result += prime * blocklist().get(i).hashCode();
+        }
         return result;
     }
 
