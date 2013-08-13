@@ -124,11 +124,11 @@ public class Board implements Comparable {
      *  Also generates Block objects as board is populated.*/
 
     public void populateBoard(String myblock){
+        boolean populateDebug = false;
         BlockString = myblock.split(" "); BlockElements = new int[4];
         for(int i = 0 ; i<BlockElements.length ; i++){
             BlockElements[i] = Integer.parseInt(BlockString[i]);
         }
-        //System.out.println(x_distance);
 
         //Grab the smaller of the two columns and rows.
         int minrow = Math.min(BlockElements[0], BlockElements[2]);
@@ -140,12 +140,19 @@ public class Board implements Comparable {
         int y_distance = maxrow - minrow;
         int x_distance = maxcol - mincol;
 
+        if(populateDebug) {
+            System.out.println(x_distance);
+        }
         //For the upper bound case of the for loop just add the distance to the smaller value
         //Able to use the variables themselves to grab the right spots in the board.
         for (int f = minrow; f <= minrow + y_distance;  f++){
-            //System.out.println("I am f: " + f);
+            if(populateDebug) {
+                System.out.println("I am f: " + f);
+            }
             for ( int p = mincol ; p <= mincol + x_distance ; p++){
-                //System.out.println("I am p: " + p);
+                if(populateDebug) {
+                    System.out.println("I am p: " + p);
+                }
                 myBoard[f][p] = true;
             }
         }
