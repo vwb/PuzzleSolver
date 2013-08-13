@@ -1,4 +1,3 @@
-package proj3;
 
 import java.util.*;
 
