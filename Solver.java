@@ -1,11 +1,13 @@
-33.goal33.goalimport java.util.*;
+import java.util.*;
 
 /** Sliding block puzzle solver that utilizes a greedy search algorithm
  * and value-based heuristics to find the (possibly nonexistant) solution
  * configuration.  */
 
 public class Solver {
-	static boolean output = true;
+	static boolean output = false;
+	static boolean debugging = false;
+	static boolean ihavevalues;
 	
     /** InputSource object used to parse goal configuration file. */
     private InputSource goalinput;
@@ -76,9 +78,9 @@ public class Solver {
         // myBlocks is unimplemented and represents the ArrayList of
         // blocks stored in each Board object
         boolean[] results = new boolean[goalconfigs.size()];
-        if(output)
-        	System.out.println(goalconfigs.size());
-        	System.out.println(b.blocklist().size());
+        //if(output)
+        	//System.out.println(goalconfigs.size());
+        	//System.out.println(b.blocklist().size());
         boolean result = true;
         for (int i = 0; i < goalconfigs.size(); i++) {
             results[i] = boardContainsGoalBlock(b, goalconfigs.get(i));
@@ -89,7 +91,7 @@ public class Solver {
         for (int i = 0; i < results.length; i++) {
             result = result && results[i];
         }
-        System.out.println(result);
+        //System.out.println(result);
         return result;
     }
     
@@ -101,12 +103,12 @@ public class Solver {
     private static boolean boardContainsGoalBlock(Board b, Block goalblock) {
         for (int j = 0; j < b.blocklist().size(); j++) {
         	if (b.blocklist().get(j).equals(goalblock)) {
-            	//if(output)
-            		//System.out.println( "" + goalblock.UL() + goalblock.LR() +  " " + b.blocklist().get(j).LR()+ b.blocklist().get(j).LR());
+            	if(output)
+            		System.out.println( "I am returning true for goalblock" + goalblock.UL() + goalblock.LR() +  " " + b.blocklist().get(j).LR()+ b.blocklist().get(j).LR());
                 return true;
             }
         }
-        System.out.println("I am returning false for goalblock: " + goalblock.UL() + goalblock.LR());
+        //System.out.println("I am returning false for goalblock: " + goalblock.UL() + goalblock.LR());
         return false;
     }
     
@@ -213,10 +215,18 @@ public class Solver {
                 }
             }
         }
+        if (priorityqueue.isEmpty()){
+        	ihavevalues = false;
+        }else{
+        	ihavevalues = true;
+        }
+        
     }
     
     public static void main(String[] args) {
-        
+        Board current;
+    	
+    	
         if (args.length == 0 || args.length > 3 || (args.length == 3 && !args[0].contains("-o"))) {
             System.err.println("Must provide at least 2 or 3 files");
             System.exit(1);
@@ -242,6 +252,7 @@ public class Solver {
         //System.out.println(initboard.getHeight() + " " + initboard.getWidth());
         // Add initial board to the HashSet
         initboard.setHeuristic(solve);
+        solve.chosenboardset.add(initboard);
         solve.seenboardmap.put(initboard, initboard);
         
         
@@ -262,48 +273,154 @@ public class Solver {
 
         // Initial board is already the solution? Guess you're done, congrats
         if (solve.compareToGoal(initboard)) {
-            System.exit(0);
+        	System.exit(0);
         }
+        
+        current = initboard;
         // Populate priority queue with initial move choices, select best one
-        solve.generatemoves(initboard);        
-        Board current = solve.priorityqueue.poll();
-        solve.currentpath.add(current.getdefine());
+        solve.generatemoves(current);
+        
+        
+        //Grab the first item off of the priority queue. (Best board to choose)
+        if(ihavevalues){
+        	current = solve.priorityqueue.poll();
+            solve.currentpath.add(current.getdefine());
+        }
+        
+        //Add the first board's movement (The string output) to a queue.
+        //error occurring here 
+        //Error = initboard doesn't make any new boards, but still tries to add the first output to 
+        //out put.
+        
+        //If the intitial board only had one possible move, 
+        //populate the priority queue with the current boards children
+        //before entering the loop.
+        if(solve.priorityqueue.isEmpty()){
+        	solve.generatemoves(current);
+        }
 
         //System.out.println("Picked first board: " + current.getdefine());
-        // While there are still legal moves to be made
-
+        
+        /**Enter the loop with your current board. Only breaks when 1 of 2 things occur:
+         * 1. The current board is the goal configuration. Hooray!
+         * 2. The priority queue, and the stack of previous moves are both empty
+         * 		i. This means that every possible move has been attempted and not worked. */
+        
         while (!solve.compareToGoal(current)) {
-            // Clear queue for new set of possible moves
-            solve.priorityqueue.clear();
-            // Generate board's possible moves, select best one
-            //System.out.println(solve.priorityqueue.size());
-            // If no moves were generated, all of this board's moves
-            // Were previously seen; "dead end"; puzzle unsolvable
+        /** Once inside loop: 
+          * 
+          *
+          * 1. Check if the priority queue is empty.
+          * 		i. Empty only if when generate moves is called, no new moves 
+          * 	   	   could be chosen. (All moves are in chosen move set)
+          *
+          * 	1.1 If queue empty but previousMoveStack is not grab the first item off the
+          * 		move stack and set that board to current. --> Should be the boards parent.
+          * 		Remove the most recent 'movement' added to the output queue.
+          * 
+          * 	1.1.1 If previousMoveStack is empty as well that means that all previous
+          * 		chosen boards have been popped off and had generate moves called on them again.
+          * 
+          * 2. Push the current board onto the previousMoveStack
+          * 
+          * 3. Clear the priority queue
+          * 
+          * 4. Call generate moves on the current board -> Replenish the 
+          *    priority queue with possible board configs based on that one board.
+          * 
+          * 5. Update current to the first item off the priority queue (grab the head)
+          * 
+          * 6. Add the chosen board to the previously seen boards. (The board's parent is currently
+          *    on top of the previousMoveStack)
+          *    
+          * 7. Inserts the current boards "movement" (what block moved where) to the queue of 
+          *    moves.
+          * 
+          * 8. Repeat steps 1-7 until either current board matches the goal configuration or,
+          *    the priority queue (no more boards could be made) and the previousMoveStack
+          *    (all parents have been attempted) are both empty. In which case there is no
+          *    solution.
+          *    
+          *    **Error: Currently printing out repeat boards. Not sure if it is because blocks moving
+          *    incorrectly, blocks being chosen off the priority queue are repeated (one board has a certain move
+          *    that is chosen, program backs up tries again and grabs the same board), movements are being added to 
+          *    the string multiple times. Still printing out repeat boards, achieving solution eventually but repeatedly makes
+          *    the same boards/movements in order to reach it.** MAIN ERROR OF PROGRAM CURRENTLY
+          *    
+          *    Error: For an impossible puzzle the removing most recent addition to the chosen moves, as done when
+          *    we attempt to back up, causes an error. Null pointer exception. If we do not attempt to remove the elements
+          *    then it will lead to repeats **FIXED**
+          *    
+          * */
+        	
+            
+        	// System.out.println(solve.priorityqueue.size());
+            
+        	//Right now once queue is empty, it is not ever replenished.
+        	//In the case where we hit a dead end need to make new moves 
+        	//with the previous board we grab.
+        	
             if (solve.priorityqueue.isEmpty()){
             	//System.out.println("Queue is empty");
-            	if (solve.previousMoveStack.size() == 0){
+            	if (solve.previousMoveStack.isEmpty()){
             		//System.out.println("No more moves");
             		System.exit(1);
             	}
-                current = solve.previousMoveStack.pop();
-                //System.out.println(solve.previousMoveStack.size());
-                solve.currentpath().removeLast();
-                continue;
+                /** Hit a dead end, so set current to most recently added board 
+            		to the MoveStack. Remove the most recently added movement path --> Lead toa dead end.
+            		Call generate moves on the new current.
+            	*/
+            	
+            	current = solve.previousMoveStack.pop();
+                solve.currentpath.removeLast();
+                solve.generatemoves(current);
+                
+                /** If the priority queue has values again (from the generate move call)
+                	Set the new current to the item at the head of the priority queue.
+                	Push this current board onto the stack of previous moves.
+                	Add the movement the current board took to the path.
+                	If this current board is equal to goal configuration, break.
+                */
+                if(ihavevalues){
+                	current = solve.priorityqueue.poll();
+                	solve.previousMoveStack.push(current);
+                	solve.chosenboardset.add(current);
+                    solve.currentpath.add((current.getdefine()));
+                    if (solve.compareToGoal(current)){
+                    	break;
+                    }
+                    //System.out.println("This is the priority size after grabbing parent " + solve.priorityqueue.size());
+                }
             }
-            solve.previousMoveStack.push(current);
-            current = solve.priorityqueue.poll();
-            solve.generatemoves(current);
-            solve.chosenboardset.add(current);
-            solve.currentpath.addFirst((current.getdefine()));
-            //System.out.println("Not solved");
+            
+            /**Clear the priority queue to ensure that the board either does or does not have
+             * new moves. 
+             */
+            solve.priorityqueue.clear();
+            
+            /** Make more moves off of the current board. Determined either by the previous iteration,
+             *  or in the case where the priority queue was empty, so an alternate move from a previous board
+             *  is chosen. */
+            solve.generatemoves(current); //Priority queue is empty after this call because it was cleared, nothing added to it.
+
+            /** If the previous call made new moves, grab the first off of the priority queue,
+             * push the new current onto the stack of previously seen boards, and add to chosen board set.
+             * Finally add the current movement the board took to the path list. */
+            if (ihavevalues){
+            	current = solve.priorityqueue.poll();
+                solve.previousMoveStack.push(current);
+            	solve.chosenboardset.add(current);
+                solve.currentpath.add((current.getdefine()));
+
+            }
+            if (output){
+            	System.out.println(current.fun);
+            }
+            if (debugging){
+                System.out.println("This is the priority size after standard call to moves " + solve.priorityqueue.size());
+                System.out.println("This is the previous Move stack size " + solve.previousMoveStack.size());
+            }
         }
-//        	for (int k = 0; k < solve.goalconfigs.size(); k ++) {
-//        		if (output)
-//        			System.out.println("" + solve.goalconfigs.get(k).UL() + 
-//        				solve.goalconfigs.get(k).LR());
-//        	}
-         output = true;
-        //System.out.println("Isgoal : " + solve.compareToGoal(current));
         // Exited while loop, solution was found, print out
         // Path taken
         while (!solve.currentpath.isEmpty()) {
