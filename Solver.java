@@ -312,7 +312,7 @@ public class Solver {
           *
           * 1. Check if the priority queue is empty.
           * 		i. Empty only if when generate moves is called, no new moves 
-          * 	   	   could be chosen. (All moves are in chosen move set)
+          * 	   	   could be chosen. (All moves are in chosen move set/board couldn't make any moves)
           *
           * 	1.1 If queue empty but previousMoveStack is not grab the first item off the
           * 		move stack and set that board to current. --> Should be the boards parent.
@@ -362,7 +362,7 @@ public class Solver {
         	
             if (solve.priorityqueue.isEmpty()){
             	//System.out.println("Queue is empty");
-            	if (solve.previousMoveStack.isEmpty()){
+            	if (current.parent == null){
             		//System.out.println("No more moves");
             		System.exit(1);
             	}
@@ -371,9 +371,10 @@ public class Solver {
             		Call generate moves on the new current.
             	*/
             	
-            	current = solve.previousMoveStack.pop();
-                solve.currentpath.removeLast();
+            	current = current.parent;
+                //solve.currentpath.removeLast();
                 solve.generatemoves(current);
+                continue;
                 
                 /** If the priority queue has values again (from the generate move call)
                 	Set the new current to the item at the head of the priority queue.
@@ -381,22 +382,21 @@ public class Solver {
                 	Add the movement the current board took to the path.
                 	If this current board is equal to goal configuration, break.
                 */
-                if(ihavevalues){
-                	current = solve.priorityqueue.poll();
-                	solve.previousMoveStack.push(current);
-                	solve.chosenboardset.add(current);
-                    solve.currentpath.add((current.getdefine()));
-                    if (solve.compareToGoal(current)){
-                    	break;
-                    }
+//                if(ihavevalues){
+//                	current = solve.priorityqueue.poll();
+//                	solve.chosenboardset.add(current);
+//                    solve.currentpath.add((current.getdefine()));
+//                    if (solve.compareToGoal(current)){
+//                    	break;
+//                    }
                     //System.out.println("This is the priority size after grabbing parent " + solve.priorityqueue.size());
-                }
+                //}
             }
             
             /**Clear the priority queue to ensure that the board either does or does not have
              * new moves. 
              */
-            solve.priorityqueue.clear();
+            //solve.priorityqueue.clear();
             
             /** Make more moves off of the current board. Determined either by the previous iteration,
              *  or in the case where the priority queue was empty, so an alternate move from a previous board
@@ -407,10 +407,8 @@ public class Solver {
              * push the new current onto the stack of previously seen boards, and add to chosen board set.
              * Finally add the current movement the board took to the path list. */
             if (ihavevalues){
-            	current = solve.priorityqueue.poll();
-                solve.previousMoveStack.push(current);
+            	current = solve.priorityqueue.poll(); 
             	solve.chosenboardset.add(current);
-                solve.currentpath.add((current.getdefine()));
 
             }
             if (output){
@@ -418,19 +416,21 @@ public class Solver {
             }
             if (debugging){
                 System.out.println("This is the priority size after standard call to moves " + solve.priorityqueue.size());
-                System.out.println("This is the previous Move stack size " + solve.previousMoveStack.size());
+                //System.out.println("This is the previous Move stack size " + solve.previousMoveStack.size());
             }
         }
         // Exited while loop, solution was found, print out
         // Path taken
-        while (!solve.currentpath.isEmpty()) {
-        	System.out.println(solve.currentpath.getFirst());
-            solve.currentpath.removeFirst();
-        }
-
-        System.exit(0);
-            
+        ArrayList<String> strings = new ArrayList<String>();
         
+        while (current.parent != null) {
+        	strings.add(0, current.getdefine());
+        	current = current.parent;
+        }
+        for (int i = 0 ; i < strings.size() ; i++){
+        	System.out.println(strings.get(i));
+        }
+        //System.exit(0); 
     }
 
 }
