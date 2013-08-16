@@ -53,28 +53,28 @@ public class Board implements Comparable {
     public int getHeuristic() {
         return heuristic;
     }
-    
+
     public String getdefine() {
         return definingmove;
     }
-    
+
     /** Set heuristics for a board; only done if configuration is new
      * and consequently worthy of checking */
     public void setHeuristic(Solver s) {
         heuristic = 0;
     }
-    
+
     public boolean[][] getBoard(){
         return myBoard;
     }
-    
+
     /** Generates a new board based on the movement of a single block.
      * This new board has all of the same properties of the old board,
      * except the single difference of one of its blocks being shifted
      * to a new position.  */
     public Board(Board oldboard, Block oldblock, Block newblock) {
         parent = oldboard;
-    	height = oldboard.height;
+        height = oldboard.height;
         width = oldboard.width;
         myBoard = new boolean[height][width];
         heuristic = 0;
@@ -83,8 +83,6 @@ public class Board implements Comparable {
                 myBoard[i][k] = oldboard.getBoard()[i][k];
             }
         }
-        
-        fun = 25;
         
         blocklist = new ArrayList<Block>(oldboard.blocklist);
         blocklist.remove(oldblock);
@@ -111,18 +109,6 @@ public class Board implements Comparable {
             }
         }
     }
-    
-    /** Run a board through the set of heuristics, incrementing or decrementing
-     * heuristic value with each test. */
-    public int runtests(Solver s) {
-        int total = 0;
-        //total += Heuristic.adjacentemptyspace(this, s);
-        //total += Heuristic.OpenPath(this, s);
-        total += Heuristic.ManhattanDistance(this, s);
-        //total += Heuristic.GoalSpotsFree(this, s);
-        return total;
-    }
-
 
     /** The populateBoard method takes in a single line from the input 
      * file, in a string form and the adds that block object to the board.
@@ -145,7 +131,6 @@ public class Board implements Comparable {
         int mincol = Math.min(BlockElements[1], BlockElements[3]);
         int maxrow = Math.max(BlockElements[0], BlockElements[2]);
         int maxcol = Math.max(BlockElements[1], BlockElements[3]);
-        //System.out.println(j);
 
         int y_distance = maxrow - minrow;
         int x_distance = maxcol - mincol;
@@ -170,18 +155,11 @@ public class Board implements Comparable {
     }
     
     //Temporary HashCode Method
-        //Uses prime number (31) and multiplies it by Array.hashCode(myBoard)
+    //Uses prime number (31) and multiplies it by Array.hashCode(myBoard)
 
     public int hashCode() {
         final int prime = 3;
         int result = 1;
-        /*result = prime * result + Arrays.hashCode(BlockElements);
-        result = prime * result + Arrays.hashCode(BlockString);
-        result = prime * result
-                + ((blocklist == null) ? 0 : blocklist.hashCode());
-        result = prime * result + height;
-        result = prime * result + Arrays.hashCode(myBoard);
-        result = prime * result + width;*/
         for (int i = 0; i < blocklist().size(); i ++) {
             result += prime * blocklist().get(i).hashCode();
         }
