@@ -26,10 +26,6 @@ public class Solver {
      * Each element is a string representing a block in the goal board. */
     public ArrayList<Block> goalconfigs;
     
-    /** A stack holding onto the current path, so if the program dead ends it can
-     * backtrack and try other possible moves. */
-    public Stack<Board> previousMoveStack;
-    
     /** HashMap containing all seen board configurations.
      * Eliminates redundancy in creating board objects
      * When a given board is checking its potential moves, it checks
@@ -82,7 +78,6 @@ public class Solver {
         chosenboardset = new HashSet<Board>();
         currentpath = new LinkedList<String>();
         priorityqueue = new PriorityQueue<Board>();
-        previousMoveStack = new Stack<Board>();
     }
     
     public void makedebug(String s) {
