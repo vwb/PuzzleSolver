@@ -6,6 +6,7 @@ public class Board implements Comparable {
     private boolean[][] myBoard;
     String [] BlockString;
     int [] BlockElements;
+    Board parent;
     
     /** The move that created this board; used as a reference
      * when doing the print sequence of a solved puzzle */
@@ -18,6 +19,9 @@ public class Board implements Comparable {
     /** Dimensions of board */
     private int height;
     private int width;
+    
+    
+    int fun;
     
     /**List of all blocks currently in the tray.
      * Used as a reference when seeing if blocks have space to move. */
@@ -33,8 +37,10 @@ public class Board implements Comparable {
         myBoard = new boolean[row][column];
         blocklist = new ArrayList<Block>();
         height = row;
+        parent = null;
         width = column;
         heuristic = 0;
+        fun = 7;
     }
     
     public int getHeight() {
@@ -55,7 +61,7 @@ public class Board implements Comparable {
     /** Set heuristics for a board; only done if configuration is new
      * and consequently worthy of checking */
     public void setHeuristic(Solver s) {
-        heuristic = runtests(s);
+        heuristic = 0;
     }
     
     public boolean[][] getBoard(){
@@ -67,7 +73,8 @@ public class Board implements Comparable {
      * except the single difference of one of its blocks being shifted
      * to a new position.  */
     public Board(Board oldboard, Block oldblock, Block newblock) {
-        height = oldboard.height;
+        parent = oldboard;
+    	height = oldboard.height;
         width = oldboard.width;
         myBoard = new boolean[height][width];
         heuristic = 0;
@@ -76,6 +83,8 @@ public class Board implements Comparable {
                 myBoard[i][k] = oldboard.getBoard()[i][k];
             }
         }
+        
+        fun = 25;
         
         blocklist = new ArrayList<Block>(oldboard.blocklist);
         blocklist.remove(oldblock);
@@ -98,6 +107,7 @@ public class Board implements Comparable {
         for (int i = toprow; i <= botrow; i++) {
             for (int j = topcol; j <= botcol; j++) {
                 myBoard[i][j] = bool;
+                
             }
         }
     }
@@ -163,7 +173,7 @@ public class Board implements Comparable {
         //Uses prime number (31) and multiplies it by Array.hashCode(myBoard)
 
     public int hashCode() {
-        final int prime = 31;
+        final int prime = 3;
         int result = 1;
         /*result = prime * result + Arrays.hashCode(BlockElements);
         result = prime * result + Arrays.hashCode(BlockString);
