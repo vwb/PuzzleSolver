@@ -78,6 +78,99 @@ DEBUGGING
 
 EVALUATING TRADEOFFS
 
+Experiments:
+
+Experiment 1:
+
+What data structures did we choose for the tray?
+	
+	We chose an explicit implementation of a nested boolean array where 
+	true values represent spaces occupied by a block and false values
+	represent empty spaces. Additionally we implemented an array list of block
+	objects for each board to differentiate the blocks on each board. This implementation
+	allowed us to create a very optimized method to create block movements. 
+	
+	Summary:
+	The experiment is to determine how fast our implementation of block movement 
+	is with our structures vs. an implementation using only a nested boolean
+	array or a list of some form. 
+	
+	The test shows the differences in access time and readability of code to determine if a block can
+	move in a given direction for two different implementations of a board as mentioned in 
+	the paragraph above. 
+	
+	Methods:
+	Compare the access time and run time for an algorithm to check if a block can move, 
+	and then moving it using our two data structure implementation and one that only
+	uses a boolean array. 
+	
+	The structure for a combined data structure is as follows:
+	
+	*To check if a block can move in a given direction, will use 'down' as example*
+	
+		Iterate over the block list for a board.
+			For each block:
+				Access the x position of its lower right corner
+				Add 1 to the value at that position (3 -> 4)
+				Iterate over the width of the block (Upper left y - Lower right y)
+				If any spots are true -> return false
+					else: return true
+	
+	This operation requires N (where N is the number of blocks) time to iterate over the list of blocks,
+	And then takes I time per block, where I is the width of the block because a 
+	boolean array allows for instant access time. So total for checking if a block 
+	can move in a given direction is O(N*I) for an entire board.
+	
+	In contrast an implementation only using an array to represent the board would be done as follows:
+	
+	Each block in the board would need its own integer value to differentiate them and so each block would
+	have an integer value unique to that block in the array.
+	
+	Like above, isolating on the case of moving a block down.
+	
+		Increment through the integers that represent each block on the board
+		For each number
+			Iterate over the rows of the board
+				Iterate over the columns of the board
+					When the chosen number is encountered, the first time it is not encountered
+					in the inner loop if the within the width of the block a true in encountered
+						return false
+					else
+						return true
+		
+	The nested for loop above would need to iterate over the entire board for EACH block. Creating a 
+	runtime of N (width of the board) * M (height of the board) * I (number of blocks).
+		
+	So in short run times for checking if a block can move in a given direction is shown below:
+	
+	2 Data Structure Implementation   | Single Structure (Nested Integer Array)
+	________________________________    _____________________________________					 			   
+   	      O(N*I)				      |   			 	O(N*M*I)
+									  |	
+	_________________________________________________________________________								  
+									  	
+	In conclusion the ease of use of a two structure implementation to represent a board allows 
+	for easier to understand code and must faster access time in determining if a block can move. 
+	This accessibility and quick access time extends to each element of the program because it is 
+	possible to use whatever would be the faster option. It also, however, increases the memory required for
+	each board because each board has a nested boolean array and an ArrayList of Block objects.
+	We decided that the speed optimization allowed from this representation of board is more important
+	than the increase in memory required for a board.
+		
+	
+Experiment 2
+	What hashcode did we choose and why?
+		Allows the list of blocks to be unsorted, still specific enough for each board.
+		Commutative qualities important
+		*Make a table showing a what values the hashcode would create*
+
+Experiment 3
+	How did you choose between making shorter and longer block moves?
+		Making a block move once at time simplifies determining where a block can move
+			*Must faster run time to make each new board
+			*Trade off between memory usage and speed: more moves/boards but quicker generation
+		Table showing benefits
+
 
 
 DISCLAIMERS
