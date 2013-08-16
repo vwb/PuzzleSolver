@@ -3,8 +3,8 @@ README OUTLINE
 Division of Labor:
 Vincent - Debugging, search algorithm, creating solution path using a parent pointer, openpath heuristic
 Steven - Input handling, Structure of Solver, Block & Board classes, search algorithm
-Sam - Empty space & manhattan distance heuristics, test files
-Trevor - Hash codes, heuristics, readme
+Sam - Empty space & manhattan distance heuristics, test files, readme
+Trevor - Hash codes, Empty Space & Goal Space heuristics, test files, readme
 
 Design:
 Discuss initial setup - using a HashMap of previously-evaluated boards to avoid recalculating heuristics (later removed),
@@ -17,6 +17,26 @@ Solver Class:
   Handle debugging with various boolean statements
     -Triggered by respective inputs to program
     -Give relevant debugging information when running program
+    
+  Solver Class holds most of the datastructures ~
+      goalconfigs - ArrayList of blocks created by parsing goal txt file and making Block objects
+      HashMap<Board, Board> seenboardmap - Hashmap of boards previously seen; allows for instant access when a
+        previously-made board is re-created; originally intended to spare unnecessary heuristic re-evaluation
+      HashSet<Board> chosenboardset - Prevents infinite looping by hashing chosen boards into a set
+      PriorityQueue<Board> priorityqueue - Queue of created, but unselected boards, the "Fringe"
+      
+  Solver Class has the program's main method
+      -Read intial configurations; a potential debugging option, initial configuration, and a goal configuration
+        -Generate InputSource objects for each text file
+          -Utilize those InputSources to create intial board's blocklists, as well as the overall goalconfig list
+          -Create board by listed dimensions (first line of intial configuration)
+      -Starting with initialized board, populate its moves and enter search algorithm (unless initial board is already
+      the goal configuration - then you're done!)
+        -Place generated moves into priority queue, pick first entry, cycle again
+        
+      -If your priority queue empties, trace back using parent field and generate new moves
+      -If main loop exits, it means you've reached a goal configuration
+        -Use parent traceback to print solutions
 
 
 Board class:
@@ -27,6 +47,9 @@ Board class:
     -Also populate boolean array by setting indices of array to True if block occupies that space
   Have height/width field of boards
     -Mostly for making sure it is of correct size, also assisted in moving blocks (can't move out of bounds)
+  Have parent field
+    -Allows for traceback to print solution, as well as step backward if a "dead end" is reached
   Had board implement Comparable
     -Associated compareTo method (for old implementation of having heuristics)
     -For placement in priorityqueue in Solver Class
+    
