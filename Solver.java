@@ -26,6 +26,7 @@ public class Solver {
      * Each element is a string representing a block in the goal board. */
     public ArrayList<Block> goalconfigs;
     
+    
     /** HashMap containing all seen board configurations.
      * Eliminates redundancy in creating board objects
      * When a given board is checking its potential moves, it checks
@@ -38,13 +39,6 @@ public class Solver {
      * greedy search algorithm */
     private HashSet<Board> chosenboardset;
     
-    /** Current path being navigated in the graph. Draws from the fringe
-     * (priority queue) to grow or shrink it. */
-    private LinkedList<String> currentpath;
-        
-    public LinkedList<String> currentpath() {
-        return currentpath;
-    }
     
     /** Priority Queue containing a prioritized set of potential boards.
      * Based on heuristic evaluation boards are ranked as more or less desirable,
@@ -76,7 +70,6 @@ public class Solver {
         goalconfigs = new ArrayList<Block>();
         seenboardmap = new HashMap<Board, Board>();
         chosenboardset = new HashSet<Board>();
-        currentpath = new LinkedList<String>();
         priorityqueue = new PriorityQueue<Board>();
     }
     
@@ -317,7 +310,6 @@ public class Solver {
         //Grab the first item off of the priority queue. (Best board to choose)
         if(ihavevalues){
             current = solve.priorityqueue.poll();
-            solve.currentpath.add(current.getdefine());
         }
         
         //If the intitial board only had one possible move, 
