@@ -151,7 +151,6 @@ public class Solver {
                 return true;
             }
         }
-        //System.out.println("I am returning false for goalblock: " + goalblock.UL() + goalblock.LR());
         return false;
     }
     
@@ -215,7 +214,6 @@ public class Solver {
                         priorityqueue.add(upboard);
                     }
                 }
-
             }
             // Check leftward movement
             if (block.checkleft(board)) {
@@ -261,12 +259,10 @@ public class Solver {
         }else{
             ihavevalues = true;
         }
-        
     }
     
     public static void main(String[] args) {
         Board current;
-        
         
         if (args == null || args.length == 0 || args.length > 3 || (args.length == 3 && !args[0].contains("-o"))) {
             System.err.println("Must provide at least 1, 2 or 3 files (1 debug option only)");
@@ -323,17 +319,11 @@ public class Solver {
         // Populate priority queue with initial move choices, select best one
         solve.generatemoves(current);
         
-        
         //Grab the first item off of the priority queue. (Best board to choose)
         if(ihavevalues){
             current = solve.priorityqueue.poll();
             solve.currentpath.add(current.getdefine());
         }
-        
-        //Add the first board's movement (The string output) to a queue.
-        //error occurring here 
-        //Error = initboard doesn't make any new boards, but still tries to add the first output to 
-        //out put.
         
         //If the intitial board only had one possible move, 
         //populate the priority queue with the current boards children
@@ -341,8 +331,6 @@ public class Solver {
         if(solve.priorityqueue.isEmpty()){
             solve.generatemoves(current);
         }
-
-        //System.out.println("Picked first board: " + current.getdefine());
         
         /**Enter the loop with your current board. Only breaks when 1 of 2 things occur:
          * 1. The current board is the goal configuration. Hooray!
@@ -350,41 +338,6 @@ public class Solver {
          *      i. This means that every possible move has been attempted and not worked. */
         
         while (!solve.compareToGoal(current)) {
-        /** Once inside loop: 
-          * 
-          *
-          * 1. Check if the priority queue is empty.
-          *         i. Empty only if when generate moves is called, no new moves 
-          *            could be chosen. (All moves are in chosen move set/board couldn't make any moves)
-          *
-          *     1.1 If queue empty but previousMoveStack is not grab the first item off the
-          *         move stack and set that board to current. --> Should be the boards parent.
-          *         Remove the most recent 'movement' added to the output queue.
-          * 
-          *     1.1.1 If previousMoveStack is empty as well that means that all previous
-          *         chosen boards have been popped off and had generate moves called on them again.
-          * 
-          * 2. Push the current board onto the previousMoveStack
-          * 
-          * 3. Clear the priority queue
-          * 
-          * 4. Call generate moves on the current board -> Replenish the 
-          *    priority queue with possible board configs based on that one board.
-          * 
-          * 5. Update current to the first item off the priority queue (grab the head)
-          * 
-          * 6. Add the chosen board to the previously seen boards. (The board's parent is currently
-          *    on top of the previousMoveStack)
-          *    
-          * 7. Inserts the current boards "movement" (what block moved where) to the queue of 
-          *    moves.
-          * 
-          * 8. Repeat steps 1-7 until either current board matches the goal configuration or,
-          *    the priority queue (no more boards could be made) and the previousMoveStack
-          *    (all parents have been attempted) are both empty. In which case there is no
-          *    solution.
-          *    
-          * */
             
             if (queuesize) {
                 System.out.println(solve.priorityqueue.size());
@@ -394,9 +347,7 @@ public class Solver {
             //with the previous board we grab.
             
             if (solve.priorityqueue.isEmpty()){
-                //System.out.println("Queue is empty");
                 if (current.parent == null){
-                    //System.out.println("No more moves");
                     System.exit(1);
                 }
                 /** Hit a dead end, so set current to most recently added board 
@@ -406,9 +357,7 @@ public class Solver {
                 current = current.parent;
                 solve.generatemoves(current);
                 continue;
-
             }
-            
             /** Make more moves off of the current board. Determined either by the previous iteration,
              *  or in the case where the priority queue was empty, so an alternate move from a previous board
              *  is chosen. */
@@ -420,9 +369,7 @@ public class Solver {
             if (ihavevalues){
                 current = solve.priorityqueue.poll(); 
                 solve.chosenboardset.add(current);
-
             }
-
             if (debugging){
                 System.out.println("This is the priority size after standard call to moves " + solve.priorityqueue.size());
             }
