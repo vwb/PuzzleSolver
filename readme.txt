@@ -37,6 +37,13 @@ Solver Class:
       -If your priority queue empties, trace back using parent field and generate new moves
       -If main loop exits, it means you've reached a goal configuration
         -Use parent traceback to print solutions
+        
+  Solver Class generates moves 
+      -Iterate over each block in a board
+          -Attempt to move said block in each direction (i.e. that block has adjacent whitespace)
+            -If that block can be moved, create a new board with that movement
+              -If that new board has already been chosen before, ignore it
+              -If that new board has been seen, but not chosen, pull it from the HashMap
 
 
 Board class:
@@ -53,3 +60,13 @@ Board class:
     -Associated compareTo method (for old implementation of having heuristics)
     -For placement in priorityqueue in Solver Class
     
+  Has Hash code dependent on blocks:
+    -Iterate over blocklist, hash each one
+    
+Block Class:
+  Represent blocks using imported point class - x  is row, y is column
+  Blocks contain HashCode method
+    -Four different prime numbers for each coordinate
+      -Multiply each prime by that coordinate
+  Movement methods
+    -Create a new block by moving it left, right, up, down
