@@ -1,30 +1,24 @@
-
 import java.util.*;
 import java.awt.*;
 
 public class Heuristic {
-	
 
 	public Heuristic(){
 	}
 
 	public static int OpenPath(Board input, Solver sol){
 		int myValue = 0;
-		boolean openPathDebug = false;
 		for (int i = 0 ; i < input.blocklist().size() ; i++){
 			Block temp = input.blocklist().get(i);
+			boolean check = true;
 			//compare temp to the goal blocks. if same width and height check if clear path
 			for (int j = 0; j < sol.goalconfigs.size(); j++){
 				Block goal = sol.goalconfigs.get(j);
 				myValue += OpenHelper(input, temp, goal);
-				if(openPathDebug) {
-					System.out.println("This is myValue: " + myValue);
-				}
+				//System.out.println("This is myValue: " + myValue);
 			}
 		}
-		if(openPathDebug) {
-			System.out.println("This is myValue right before return: " + myValue);
-		}
+		//System.out.println("This is myValue right before return: " + myValue);
 		return myValue;
 	}
 
@@ -33,7 +27,7 @@ public class Heuristic {
 		for (int t = goal.UL().x ; t <= goal.LR().x ; t ++){
 			for (int r = goal.UL().y ; r <= goal.LR().y ; r++){
 				if (input.getBoard()[t][r] == true){
-					return 0;
+					return 50;
 				}
 			}
 		}
@@ -41,7 +35,7 @@ public class Heuristic {
 			// If blocks are equal size, but don't share a column or row
 			// There is no direct path - return 0
 			if (temp.LR().x != goal.LR().x && temp.LR().y != goal.LR().y) {
-				return 0;
+				return 50;
 			}
 			if (temp.LR().x == goal.LR().x){
 				int ymin = 0;
@@ -59,7 +53,7 @@ public class Heuristic {
 					notadjacent = true;
 					for (int y = goal.UL().x ; y <= goal.LR().x ; y++){
 						if (input.getBoard()[y][k] == true){
-							return 0;
+							return 50;
 						}
 					}
 				}
@@ -79,7 +73,7 @@ public class Heuristic {
 					notadjacent = true;
 					for (int y = goal.UL().y ; y <= goal.LR().y ; y++){
 						if(input.getBoard()[k][y] == true){
-							return 0;
+							return 50;
 						}
 					}
 				}
@@ -87,11 +81,11 @@ public class Heuristic {
 			// There was no obstruction in the direct path - give heuristic value
 			// If goal config is adjacent to current block, give higher heuristic
 			if (!notadjacent) {
-				return 25;
+				return 0;
 			}
-			return 15;
+			return 10;
 		}
-		return 0;
+		return 50;
 	}
 
 	public static int ManhattanDistance(Board input, Solver s){
@@ -99,63 +93,70 @@ public class Heuristic {
 		ArrayList<Block> blocks = input.blocklist();
 		HashMap<Block, Integer> seenSoFar = new HashMap<Block, Integer>();
 		int sum = 0;
-		int area = input.getHeight() * input.getWidth();
-		double frac = (double) sum / (double) area;
+		//int area = input.getHeight() * input.getWidth();
+		//double frac = (double) sum / (double) area;
 
 		for (int i = 0; i < blocks.size(); i++) {
 			for (int j = 0; j < goal.size(); j++) {
 				if (goal.get(j).height == blocks.get(i).height &&
 						goal.get(j).width == blocks.get(i).width) {
-					sum += manhattanHelper(blocks.get(i), goal.get(j), seenSoFar);
+					 manhattanHelper(blocks.get(i), goal.get(j), seenSoFar);
 				}
 			}
 		}
+		
+		for (int k = 0; k < goal.size(); k ++) {
+			Integer mapval = seenSoFar.get(goal.get(k));
+			if (mapval != null) {
+				sum += seenSoFar.get(goal.get(k));
+			}
+		}
 
-		if (0.0 <= frac && frac <= 0.1) {
-			return 100;
-		}
-		if (.1 <= frac && frac <= .2) {
-			return 90;
-		}
-		if (.2 <= frac && frac <= .3) {
-			return 80;
-		}
-		if (.3 <= frac && frac <= .4) {
-			return 70;
-		}
-		if (.4 <= frac && frac <= .5) {
-			return 60;
-		}
-		if (.5 <= frac && frac <= .6) {
-			return 50;
-		}
-		if (.6 <= frac && frac <= .7) {
-			return 40;
-		}
-		if (.7 <= frac && frac <= .8) {
-			return 30;
-		}
-		if (.8 <= frac && frac <= .9) {
-			return 20;
-		}
-		else {
-			return 0;
-		}
+//		if (0.0 <= frac && frac <= 0.1) {
+//			return 0;
+//		}
+//		if (.1 <= frac && frac <= .2) {
+//			return 10;
+//		}
+//		if (.2 <= frac && frac <= .3) {
+//			return 20;
+//		}
+//		if (.3 <= frac && frac <= .4) {
+//			return 30;
+//		}
+//		if (.4 <= frac && frac <= .5) {
+//			return 40;
+//		}
+//		if (.5 <= frac && frac <= .6) {
+//			return 50;
+//		}
+//		if (.6 <= frac && frac <= .7) {
+//			return 60;
+//		}
+//		if (.7 <= frac && frac <= .8) {
+//			return 70;
+//		}
+//		if (.8 <= frac && frac <= .9) {
+//			return 90;
+//		}
+//		else {
+//			return 100;
+//		}
+		return sum;
 	}
 
-	static private int manhattanHelper(Block block, Block goal, HashMap map) {
+	static private void manhattanHelper(Block block, Block goal, HashMap<Block, Integer> map) {
 		int x = Math.max(block.UL().x, goal.UL().x) - Math.min(block.UL().x, goal.UL().x);
 		int y = Math.max(block.UL().y, goal.UL().y) - Math.min(block.UL().y, goal.UL().y);
 		int sum = x + y;
-		if (map.containsKey(block)) {
-			if (sum < (Integer) map.get(block)) {
-				map.put(block, sum);
+
+		if (map.containsKey(goal)) {
+			if (sum < map.get(goal)) {
+				map.put(goal, sum);
 			}
-			else {
-				sum = (Integer) map.get(block);
-			}
+		} else {
+			map.put(goal, sum);
 		}
-		return sum;
 	}
 
 	/*
@@ -219,23 +220,23 @@ public class Heuristic {
 			return soFar;
 		}
 		if( x == b.getWidth() - 1 && y != b.getHeight() - 1) {
-			return soFar + whiteSpaceHelper(b, x, y + 1, set, .35 + soFar);
+			return soFar + whiteSpaceHelper(b, x, y + 1, set, 1.5 + soFar);
 		}
 		if( y == b.getHeight() - 1 && x != b.getWidth() - 1) {
-			return soFar + whiteSpaceHelper(b, x + 1, y, set, .35 + soFar);
+			return soFar + whiteSpaceHelper(b, x + 1, y, set, 1.5 + soFar);
 		}
 		if(vals[x+1][y] == true && vals[x][y+1] == true) {
 			return soFar;
 		}
 		if (vals[x][y+1] == true) {
-			return soFar + whiteSpaceHelper(b, x + 1, y, set, .35 + soFar);
+			return soFar + whiteSpaceHelper(b, x + 1, y, set, 1.5 + soFar);
 		}
 		if (vals[x+1][y] == true) {
-			return soFar + whiteSpaceHelper(b, x, y + 1, set, .35 + soFar);
+			return soFar + whiteSpaceHelper(b, x, y + 1, set, 1.5 + soFar);
 		}
 		else {
-			return soFar + whiteSpaceHelper(b, x + 1, y, set, .35 + soFar) + 
-					whiteSpaceHelper(b, x, y + 1, set, .35 + soFar);
+			return soFar + whiteSpaceHelper(b, x + 1, y, set, 1.5 + soFar) + 
+					whiteSpaceHelper(b, x, y + 1, set, 1.5 + soFar);
 		}
 
 	}
@@ -255,23 +256,23 @@ public class Heuristic {
 				Block check = input.blocklist().get(j);
 				if(check.equals(goal)) {
 					//Same size blocks ==> Highest Heuristic
-					weight += 10;
+					weight += 0;
 				}
 				/*
 				 * If the block is empty, add medium
 				 */
 				if (val[ULx][ULy] == false && val[LRx][LRy] == false) {
-					weight += 5;
+					weight += 10;
 				}
 				/*
 				 * If block is partially occupied.... do nothing
 				 */
 				if(val[ULx][ULy] == true && val[LRx][LRy] != true) {
 					//I.E. we know a block is in the configuration spots
-					weight -= 3;
+					weight += 25;
 				}
 				else if(val[ULx][ULy] == false && val[LRx][LRy] != false) {
-					weight -= 3;
+					weight += 25;
 				}
 			}
 		}		
