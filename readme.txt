@@ -145,8 +145,8 @@ What data structures did we choose for the tray?
 	
 	2 Data Structure Implementation   | Single Structure (Nested Integer Array)
 	________________________________    _____________________________________					 			   
-   	      O(N*I)				      |   			 	O(N*M*I)
-									  |	
+   	        O(N*I)			  |   		O(N*M*I)
+					  |	
 	_________________________________________________________________________								  
 									  	
 	In conclusion the ease of use of a two structure implementation to represent a board allows 
