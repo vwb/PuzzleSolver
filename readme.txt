@@ -70,3 +70,20 @@ Block Class:
       -Multiply each prime by that coordinate
   Movement methods
     -Create a new block by moving it left, right, up, down
+    
+    
+TOPICS:
+DEBUGGING
+
+
+EVALUATING TRADEOFFS
+
+
+
+DISCLAIMERS
+Discuss how we created a Heuristic class and originally intended to run move generation based on heuristics,
+but found that using a Breadth-first search was actually better, so we abandoned this class. To improve we would have
+designed better and more efficient heuristics
+
+
+PROGRAM DEVELOPMENT
