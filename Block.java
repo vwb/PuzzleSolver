@@ -154,9 +154,9 @@ public class Block {
      * a board's hash  */
     public int hashCode() {
         final int prime = 37;
-        final int prime2 = 31;
+        final int prime2 = 7;
         final int prime3 = 17;
-        final int prime4 = 29;
+        final int prime4 = 51;
         
         int result = 0;
         result += prime * UL().x;
